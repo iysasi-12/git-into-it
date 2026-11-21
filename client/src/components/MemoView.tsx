@@ -28,7 +28,7 @@ export function MemoView({ data, onClose }: { data: MemoResponse; onClose: () =>
     setTimeout(() => {
       setCopied(false);
     }, 2000);
-  }
+  } 
   return (
     <div className="print-only-area fixed inset-0 z-50 overflow-y-auto bg-black/40 p-4" onClick={onClose}>
       <article className="mx-auto max-w-3xl rounded-xl bg-white p-4 shadow-xl sm:p-8" onClick={(e) => e.stopPropagation()}>
