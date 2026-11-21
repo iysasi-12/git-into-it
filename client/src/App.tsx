@@ -9,7 +9,13 @@ import { prettyDate } from "./lib/format";
 
 export default function App() {
   const planner = usePlanner();
-  const { plan, recommendation, memo, loading } = planner;
+  const {
+  plan,
+  previousPlan,
+  recommendation,
+  memo,
+  loading,
+} = planner;
   const cheapest = plan ? Math.min(...plan.options.map((o) => o.totalCost)) : 0;
 
   return (
@@ -68,8 +74,16 @@ export default function App() {
                   <OptionCard
                     key={o.id}
                     option={o}
+                    previousOption={
+                      previousPlan?.options.find(
+                        (p) => p.id === o.id
+                      )
+                    }
                     cheapest={cheapest}
-                    recommended={recommendation?.recommendedOptionId === o.id}
+                    recommended={
+                      recommendation?.recommendedOptionId ===
+                      o.id
+                    }
                     onMemo={() => planner.generateMemo(o.id)}
                     memoLoading={loading.memo}
                   />
