@@ -97,7 +97,7 @@ Venues can have an optional `timeZone` (`"ET"` or `"CT"`, default ET). Only Nort
 
 1. *Describe it* → "Use sample" → Extract details → Build travel options
 2. Point out the ★ recommendation and the tradeoffs, then click a cost to show the math
-3. What-ifs: "Leave 3 players home" → "Do the same for coaches" (multi-turn) → "Use one fewer bus" (rejected: not enough seats) → "Cap hotel budget at $7000" → "Upgrade hotel quality"
+3. What-ifs: "Leave 3 players home" → "Do the same for coaches" (multi-turn) → "Use one fewer bus" (rejected: not enough seats) → "Upgrade hotel quality" → "Cap hotel budget at $7000"
 4. Undo a chip, then Generate travel memo → Copy as text or Print
 
 ## Known limits
