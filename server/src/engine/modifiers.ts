@@ -87,3 +87,16 @@ export function whatIfEffect(before: PlanResult, after: PlanResult): { changed: 
   const newWarnings = [...new Set(after.options.flatMap((o) => o.warnings).filter((w) => !old.has(w)))];
   return { changed, newWarnings };
 }
+
+/**
+ * Why a supported what-if changed nothing, for when the engine added no warning that says so.
+ * Built from engine state only (the cap is the user's own number), never from AI text.
+ */
+export function noChangeReason(command: WhatIfCommand, before: PlanResult): string {
+  const hotelChange = command.action === "shift_hotel_tier" || command.action === "set_hotel_tier";
+  if (hotelChange && before.hotelBudgetCap != null) {
+    const cap = `$${before.hotelBudgetCap.toLocaleString("en-US")}`;
+    return `With the ${cap} hotel budget cap in place, each option already has the best hotel that fits under it. Remove the cap to change hotel quality.`;
+  }
+  return "It wouldn't change any option's buses, hotel or cost.";
+}

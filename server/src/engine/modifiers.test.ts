@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { TripRequest } from "@app/shared";
-import { whatIfEffect } from "./modifiers.js";
+import { noChangeReason, whatIfEffect } from "./modifiers.js";
 import { buildPlan } from "./optionBuilder.js";
 
 // Hand-derived: 65 + 8 + 4 = 77 travelers. A and B ride 56-seat Standard Motorcoaches,
@@ -36,5 +36,24 @@ describe("whatIfEffect", () => {
 
   it("treats identical plans as unchanged", () => {
     expect(whatIfEffect(before, buildPlan(base))).toEqual({ changed: false, newWarnings: [] });
+  });
+});
+
+describe("noChangeReason", () => {
+  // Hand-derived from the sample data: under a $7,000 cap every option already gets the best
+  // hotel that fits (economy), so an upgrade can't change anything.
+  const cap = { action: "set_hotel_budget_cap", amount: 7000, explanation: "Cap the hotel budget at $7,000." } as const;
+  const upgrade = { action: "shift_hotel_tier", amount: 1, explanation: "Upgrade hotel quality." } as const;
+
+  it("names the hotel cap when it blocks a hotel-quality change", () => {
+    const before = buildPlan(base, [cap]);
+    expect(whatIfEffect(before, buildPlan(base, [cap, upgrade])).changed).toBe(false);
+    expect(noChangeReason(upgrade, before)).toBe(
+      "With the $7,000 hotel budget cap in place, each option already has the best hotel that fits under it. Remove the cap to change hotel quality.",
+    );
+  });
+
+  it("falls back to a general reason otherwise", () => {
+    expect(noChangeReason(upgrade, buildPlan(base))).toBe("It wouldn't change any option's buses, hotel or cost.");
   });
 });

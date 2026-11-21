@@ -10,7 +10,7 @@ import type {
 } from "@app/shared";
 import { interpretWhatIf, parseRequest, recommend, writeMemo } from "../ai/aiService.js";
 import { getDataset } from "../data/dataRepository.js";
-import { whatIfEffect } from "../engine/modifiers.js";
+import { noChangeReason, whatIfEffect } from "../engine/modifiers.js";
 import { buildPlan } from "../engine/optionBuilder.js";
 import { AppError } from "../errors.js";
 import { asyncHandler } from "../middleware/errorHandler.js";
@@ -86,7 +86,8 @@ api.post(
         plan = candidate;
         note = `Applied: ${command.explanation}`;
       } else {
-        note = [`Not applied: ${command.explanation}`, ...effect.newWarnings].join(" ");
+        const why = effect.newWarnings.length ? effect.newWarnings : [noChangeReason(command, current)];
+        note = [`Not applied: ${command.explanation}`, ...why].join(" ");
       }
     }
     const body: WhatIfResponse = { command, modifiers: nextModifiers, plan, note, source };
