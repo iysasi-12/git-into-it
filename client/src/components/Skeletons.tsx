@@ -1,4 +1,4 @@
-import { Card, Spinner } from "./ui";
+import {Card, Spinner, useElapsedSeconds } from "./ui";
 
 // Gray placeholders in the shape of the real results, so the page doesn't jump when they arrive.
 
@@ -83,12 +83,18 @@ export function PlanSkeleton() {
 
 /** Shaped like the RecommendationPanel. Live Aivana takes 30-40 s here, so say why we're waiting. */
 export function RecommendationSkeleton() {
+  
+  const seconds =
+    useElapsedSeconds(true);
+
   return (
     <Card
       title="Recommendation"
       right={
         <span className="flex items-center gap-2 text-xs text-stone-500">
-          <Spinner className="h-4 w-4" /> Aivana is reviewing the options…
+          <Spinner className="h-4 w-4" />
+          Aivana is reviewing the options…
+          {seconds >= 3 && ` ${seconds}s`}
         </span>
       }
     >
