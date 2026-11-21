@@ -14,6 +14,7 @@
     "typecheck": "npm -w server run typecheck && npm -w client run typecheck"
   },
   "devDependencies": {
+    "@types/node": "^26.6.6",
     "concurrently": "^9.1.2"
   }
 }

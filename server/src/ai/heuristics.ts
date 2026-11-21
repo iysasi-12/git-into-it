@@ -13,7 +13,10 @@ const MONTHS = ["january", "february", "march", "april", "may", "june", "july", 
 
 function countFor(text: string, noun: string): number | null {
   const m = text.match(new RegExp(`(\\d+)\\s+${noun}`, "i"));
-  return m ? Number(m[1]) : null;
+  if (m) return Number(m[1]);
+  // "no staff", "zero coaches", "without staff" mean 0, not "missing"
+  if (new RegExp(`\\b(?:no|zero|without)\\s+${noun}`, "i").test(text)) return 0;
+  return null;
 }
 
 function parseDate(text: string, today: string): string | null {
