@@ -10,6 +10,7 @@ import type {
 } from "@app/shared";
 import { interpretWhatIf, parseRequest, recommend, writeMemo } from "../ai/aiService.js";
 import { getDataset } from "../data/dataRepository.js";
+import { whatIfEffect } from "../engine/modifiers.js";
 import { buildPlan } from "../engine/optionBuilder.js";
 import { AppError } from "../errors.js";
 import { asyncHandler } from "../middleware/errorHandler.js";
@@ -72,15 +73,23 @@ api.post(
     const current = buildPlan(request, modifiers);
     const { command, source } = await interpretWhatIf(message, current);
 
-    const nextModifiers: WhatIfCommand[] = command.action === "unsupported" ? modifiers : [...modifiers, command];
-    const plan = command.action === "unsupported" ? current : buildPlan(request, nextModifiers);
-    const body: WhatIfResponse = {
-      command,
-      modifiers: nextModifiers,
-      plan,
-      note: command.action === "unsupported" ? command.explanation : `Applied: ${command.explanation}`,
-      source,
-    };
+    // The engine keeps what is feasible and warns about the rest, so a supported command can
+    // still change nothing (e.g. one fewer bus when every seat is needed). Don't call that applied.
+    let nextModifiers: WhatIfCommand[] = modifiers;
+    let plan = current;
+    let note = command.explanation;
+    if (command.action !== "unsupported") {
+      const candidate = buildPlan(request, [...modifiers, command]);
+      const effect = whatIfEffect(current, candidate);
+      if (effect.changed) {
+        nextModifiers = [...modifiers, command];
+        plan = candidate;
+        note = `Applied: ${command.explanation}`;
+      } else {
+        note = [`Not applied: ${command.explanation}`, ...effect.newWarnings].join(" ");
+      }
+    }
+    const body: WhatIfResponse = { command, modifiers: nextModifiers, plan, note, source };
     res.json(body);
   }),
 );

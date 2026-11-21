@@ -5,7 +5,7 @@ import { DEPARTURE_LABELS } from "../lib/format";
 import { Button, Card } from "./ui";
 
 const SAMPLE =
-  "Plan travel for our game at Ohio State on October 10. 65 players, 8 coaches, 4 staff. Leave Friday after classes. We need a vegetarian option at team meals.";
+  "Plan travel for our game at Ohio State on Saturday, October 9, 2027. 65 players, 8 coaches, 4 staff. Leave Friday after classes. We need a vegetarian option at team meals.";
 
 const input = "w-full rounded-lg border border-stone-300 px-3 py-2 text-sm focus:border-brand focus:ring-2 focus:ring-brand/30 focus:outline-none";
 const labelCls = "mb-1 block text-xs font-medium text-stone-600";

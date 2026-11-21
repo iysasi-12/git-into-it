@@ -1,4 +1,4 @@
-import type { DepartureDay, HotelTier, TripRequest, WhatIfCommand } from "@app/shared";
+import type { DepartureDay, HotelTier, PlanResult, TravelOption, TripRequest, WhatIfCommand } from "@app/shared";
 
 /** Effective scenario after replaying all what-if commands over the base request. */
 export interface Scenario {
@@ -67,4 +67,23 @@ export function applyModifiers(base: TripRequest, modifiers: WhatIfCommand[] = [
     }
   }
   return s;
+}
+
+/** What a booking would actually differ on: cost, headcount, buses, rooms, hotel, departure. */
+const outcomeKey = (o: TravelOption) =>
+  JSON.stringify([o.totalCost, o.travelers.total, o.buses.count, o.buses.busTypeName, o.rooms.total, o.nights, o.hotel?.name ?? null, o.departure]);
+
+/**
+ * Did a what-if change anything? The engine never refuses a modifier outright; it keeps
+ * what is feasible and adds a warning (e.g. "Cannot use 1 bus(es) … Kept 2."). So compare
+ * the plans: if no option changed, the what-if had no effect, and the new warnings say why.
+ */
+export function whatIfEffect(before: PlanResult, after: PlanResult): { changed: boolean; newWarnings: string[] } {
+  const changed = after.options.some((o) => {
+    const prev = before.options.find((p) => p.id === o.id);
+    return !prev || outcomeKey(prev) !== outcomeKey(o);
+  });
+  const old = new Set(before.options.flatMap((o) => o.warnings));
+  const newWarnings = [...new Set(after.options.flatMap((o) => o.warnings).filter((w) => !old.has(w)))];
+  return { changed, newWarnings };
 }

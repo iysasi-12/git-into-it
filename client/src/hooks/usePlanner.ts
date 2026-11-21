@@ -112,8 +112,9 @@ export function usePlanner() {
         setPreviousPlan(plan);
         setPlan(r.plan);
         setModifiers(r.modifiers);
-        // Unsupported = nothing changed, so the current recommendation still holds.
-        if (r.command.action !== "unsupported") refreshRecommendation(baseRequest, r.modifiers);
+        // No new modifier = nothing changed (unsupported, or the engine couldn't apply it),
+        // so the current recommendation still holds.
+        if (r.modifiers.length !== modifiers.length) refreshRecommendation(baseRequest, r.modifiers);
         setChat((c) => [...c, { role: "assistant", text: r.note, source: r.source }]);
         return r;
       } catch (e) {
