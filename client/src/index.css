@@ -10,6 +10,29 @@ body {
   @apply bg-stone-50 text-stone-800 antialiased;
 }
 
+/* iOS Safari/Edge (WebKit) give date/time inputs a native look with an
+   intrinsic min-width, so they overflow their grid cell and sit taller than
+   the other fields. Reset them so w-full and the shared input styles apply. */
+input[type="date"],
+input[type="time"] {
+  -webkit-appearance: none;
+  appearance: none;
+  min-width: 0;
+  min-height: 2.625rem; /* same as the other inputs: py-2 + text-base + border */
+  background-color: white;
+}
+@media (width >= 40rem) {
+  input[type="date"],
+  input[type="time"] {
+    min-height: 2.375rem; /* sm and up: py-2 + text-sm + border */
+  }
+}
+input[type="date"]::-webkit-date-and-time-value,
+input[type="time"]::-webkit-date-and-time-value {
+  margin: 0;
+  text-align: left;
+}
+
 @media print {
   .no-print {
     display: none !important;

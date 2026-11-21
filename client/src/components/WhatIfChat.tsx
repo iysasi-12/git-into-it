@@ -88,7 +88,7 @@ export function WhatIfChat({ planner }: { planner: Planner }) {
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="e.g. What if we bring 2 more staff?"
-          className="flex-1 rounded-lg border border-stone-300 px-3 py-2 text-sm focus:border-brand focus:ring-2 focus:ring-brand/30 focus:outline-none"
+          className="flex-1 rounded-lg border border-stone-300 px-3 py-2 text-base sm:text-sm focus:border-brand focus:ring-2 focus:ring-brand/30 focus:outline-none"
         />
         <Button type="submit" loading={planner.loading.whatif} disabled={!text.trim() || busy}>
           Send
