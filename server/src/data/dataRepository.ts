@@ -16,6 +16,7 @@ export function loadDataset(): Dataset {
   const v = readJson<Pick<Dataset, "origin" | "venues">>("venues.json");
   const h = readJson<Pick<Dataset, "hotels">>("hotels.json");
   const r = readJson<Pick<Dataset, "busTypes" | "mealRates" | "policy">>("rates.json");
+  const s = readJson<{ games: Dataset["schedule"] }>("schedule.json");
   return {
     origin: v.origin,
     venues: v.venues,
@@ -23,6 +24,7 @@ export function loadDataset(): Dataset {
     busTypes: r.busTypes,
     mealRates: r.mealRates,
     policy: r.policy,
+    schedule: s.games,
   };
 }
 

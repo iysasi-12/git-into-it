@@ -1,0 +1,11 @@
+{
+  "_meta": "Team-built sample 2027 away schedule (BGSU's official schedule was not provided). Kickoff times are stadium-local, HH:MM 24-hour.",
+  "games": [
+    { "opponentId": "penn-state", "date": "2027-09-11", "gameTime": "12:00" },
+    { "opponentId": "kent-state", "date": "2027-09-25", "gameTime": "15:30" },
+    { "opponentId": "ohio-state", "date": "2027-10-09", "gameTime": "15:30" },
+    { "opponentId": "toledo", "date": "2027-10-23", "gameTime": "14:00" },
+    { "opponentId": "northern-illinois", "date": "2027-11-03", "gameTime": "19:00" },
+    { "opponentId": "western-michigan", "date": "2027-11-20", "gameTime": "12:00" }
+  ]
+}
