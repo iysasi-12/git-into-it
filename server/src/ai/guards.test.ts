@@ -43,6 +43,10 @@ describe("what-if heuristics", () => {
     ["Add one more bus", { action: "adjust_buses", amount: 1 }],
     ["Switch to a cheaper hotel", { action: "shift_hotel_tier", amount: -1 }],
     ["Let's leave Thursday instead", { action: "set_departure", departure: "two_days_before" }],
+    ["Send 2 more coaches", { action: "adjust_coaches", amount: 2 }],
+    ["Send two extra buses", { action: "adjust_buses", amount: 2 }],
+    ["Put only 3 players per room", { action: "unsupported" }],
+
   ])("%s", (msg, expected) => {
     expect(heuristicWhatIf(msg)).toMatchObject(expected);
   });

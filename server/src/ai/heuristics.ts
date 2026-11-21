@@ -75,14 +75,17 @@ export function heuristicWhatIf(message: string): WhatIfCommand {
   const t = message.toLowerCase();
     const group = (noun: string) => {
     const adj = "(?:(?:more|extra|assistant)\\s+)*";
-    const minus = t.match(new RegExp(`(?:leave|drop|cut|remove|minus|fewer|less|without|lose|send)\\s+${NUM_WORD}\\s+${adj}${noun}`));
+    const minus = t.match(new RegExp(`(?:leave|drop|cut|remove|minus|fewer|less|without|lose)\\s+${NUM_WORD}\\s+${adj}${noun}`));
     if (minus) return -num(minus[1]);
+    // "send" only means remove when followed by home/back: "send 4 players home"
+    const sendHome = t.match(new RegExp(`send\\s+${NUM_WORD}\\s+${adj}${noun}\\s+(?:home|back)`));
+    if (sendHome) return -num(sendHome[1]);
     const minus2 = t.match(new RegExp(`${NUM_WORD}\\s+(?:fewer|less)\\s+${noun}`));
     if (minus2) return -num(minus2[1]);
-    const plus = t.match(new RegExp(`(?:add|bring|plus|extra|another)\\s+${NUM_WORD}?\\s*${adj}${noun}`));
-    if (plus) return plus[1] ? num(plus[1]) : 1;
     const plus2 = t.match(new RegExp(`${NUM_WORD}\\s+(?:more|extra)\\s+${noun}`));
     if (plus2) return num(plus2[1]);
+    const plus = t.match(new RegExp(`(?:add|bring|plus|extra|another)\\s+${NUM_WORD}?\\s*${adj}${noun}`));
+    if (plus) return plus[1] ? num(plus[1]) : 1;
     return null;
   };
 
@@ -95,8 +98,11 @@ export function heuristicWhatIf(message: string): WhatIfCommand {
   if (b) return { action: "adjust_buses", amount: b, explanation: `${b < 0 ? "Use" : "Add"} ${Math.abs(b)} ${b < 0 ? "fewer" : "more"} bus(es).` };
 
   
-  const cap = t.match(/\$?\s*(\d[\d,]*(?:\.\d+)?)\s*(k)?\b/);
-  if (/(cap|limit|budget|max|under|spend|only|at most|no more than|afford)/.test(t) && /hotel|lodging|room/.test(t) && cap) {    const amount = Number(cap[1].replace(/,/g, "")) * (cap[2] ? 1000 : 1);
+    const cap = t.match(/\$?\s*(\d[\d,]*(?:\.\d+)?)\s*(k)?\b/);
+  const strongCap = /(cap|limit|budget|max|under)/.test(t);
+  const weakCap = /(spend|afford|at most|no more than)/.test(t) && /\$|\d\s*k\b/.test(t);
+  if ((strongCap || weakCap) && /hotel|lodging|room/.test(t) && cap) {
+    const amount = Number(cap[1].replace(/,/g, "")) * (cap[2] ? 1000 : 1);
     return { action: "set_hotel_budget_cap", amount, explanation: `Cap total hotel spend at $${amount.toLocaleString()}.` };
   }
   const tier = t.match(/\b(economy|budget|midscale|mid-range|upscale|luxury)\b/);
