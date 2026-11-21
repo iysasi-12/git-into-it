@@ -112,11 +112,15 @@ export type WhatIfAction =
   | "set_hotel_tier"
   | "shift_hotel_tier"
   | "set_departure"
+  | "set_player_occupancy"
   | "unsupported";
 
 export interface WhatIfCommand {
   action: WhatIfAction;
-  /** Signed delta for adjust_* / shift_hotel_tier; dollar cap (user-supplied) for set_hotel_budget_cap. */
+  /**
+     * Signed delta for adjust_* / shift_hotel_tier; dollar cap for
+     * set_hotel_budget_cap; players per room for set_player_occupancy.
+     */
   amount?: number;
   tier?: HotelTier;
   departure?: DepartureDay;

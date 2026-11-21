@@ -8,6 +8,7 @@ export interface Scenario {
   tierShift: number;
   tierOverride: HotelTier | null;
   departureOverride: DepartureDay | null;
+  playerOccupancyOverride: number | null;
   notes: string[];
 }
 
@@ -19,6 +20,7 @@ export function applyModifiers(base: TripRequest, modifiers: WhatIfCommand[] = [
     tierShift: 0,
     tierOverride: null,
     departureOverride: null,
+    playerOccupancyOverride: null,
     notes: [],
   };
   const r = s.request;
@@ -52,6 +54,13 @@ export function applyModifiers(base: TripRequest, modifiers: WhatIfCommand[] = [
         break;
       case "set_departure":
         if (m.departure) s.departureOverride = m.departure;
+        break;
+      case "set_player_occupancy":
+        if (Number.isInteger(m.amount) && (m.amount ?? 0) >= 1 && (m.amount ?? 0) <= 4) {
+          s.playerOccupancyOverride = m.amount!;
+        } else {
+          s.notes.push("Player occupancy must be a whole number from 1 to 4.");
+        }
         break;
       case "unsupported":
         break;

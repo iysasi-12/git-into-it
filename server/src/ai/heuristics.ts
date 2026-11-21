@@ -73,7 +73,15 @@ export function heuristicParse(text: string, today: string, opponentName: string
 
 export function heuristicWhatIf(message: string): WhatIfCommand {
   const t = message.toLowerCase();
-    const group = (noun: string) => {
+
+  // Occupancy first, so "bring 3 players per room" isn't read as "add 3 players".
+  const occ = t.match(/\b(\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s+(?:players?|guys|athletes|kids)\s+(?:per|each|in\s+(?:a|each|every))\s+room/);
+  if (occ) {
+    const amount = num(occ[1]);
+    return { action: "set_player_occupancy", amount, explanation: `Put ${amount} players in each room.` };
+  }
+
+  const group = (noun: string) => {
     const adj = "(?:(?:more|extra|assistant)\\s+)*";
     const minus = t.match(new RegExp(`(?:leave|drop|cut|remove|minus|fewer|less|without|lose)\\s+${NUM_WORD}\\s+${adj}${noun}`));
     if (minus) return -num(minus[1]);
@@ -89,16 +97,16 @@ export function heuristicWhatIf(message: string): WhatIfCommand {
     return null;
   };
 
-   const p = group("(?:players?|guys|athletes|kids)");
+  const p = group("(?:players?|guys|athletes|kids)");
   if (p) return { action: "adjust_players", amount: p, explanation: `${p < 0 ? "Remove" : "Add"} ${Math.abs(p)} player(s).` };
   const c = group("coach(?:es)?");
   if (c) return { action: "adjust_coaches", amount: c, explanation: `${c < 0 ? "Remove" : "Add"} ${Math.abs(c)} coach(es).` };
-  const s = group("(?:staff(?: members?)?|trainers?|(?:equipment )?managers?)");  if (s) return { action: "adjust_staff", amount: s, explanation: `${s < 0 ? "Remove" : "Add"} ${Math.abs(s)} staff.` };
+  const s = group("(?:staff(?: members?)?|trainers?|(?:equipment )?managers?)");
+  if (s) return { action: "adjust_staff", amount: s, explanation: `${s < 0 ? "Remove" : "Add"} ${Math.abs(s)} staff.` };
   const b = group("bus(?:es)?");
   if (b) return { action: "adjust_buses", amount: b, explanation: `${b < 0 ? "Use" : "Add"} ${Math.abs(b)} ${b < 0 ? "fewer" : "more"} bus(es).` };
 
-  
-    const cap = t.match(/\$?\s*(\d[\d,]*(?:\.\d+)?)\s*(k)?\b/);
+  const cap = t.match(/\$?\s*(\d[\d,]*(?:\.\d+)?)\s*(k)?\b/);
   const strongCap = /(cap|limit|budget|max|under)/.test(t);
   const weakCap = /(spend|afford|at most|no more than)/.test(t) && /\$|\d\s*k\b/.test(t);
   if ((strongCap || weakCap) && /hotel|lodging|room/.test(t) && cap) {
@@ -116,7 +124,10 @@ export function heuristicWhatIf(message: string): WhatIfCommand {
   if (/two days before|thursday/.test(t)) return { action: "set_departure", departure: "two_days_before", explanation: "Depart two days before the game." };
   if (/day before|night before|friday/.test(t)) return { action: "set_departure", departure: "day_before", explanation: "Depart the day before the game." };
   if (/game day|same day|morning of/.test(t)) return { action: "set_departure", departure: "game_day", explanation: "Travel on game day." };
-  return { action: "unsupported", explanation: "I couldn't map that to a supported change (players, coaches, staff, buses, hotel cap/tier, departure)." };
+  return {
+    action: "unsupported",
+    explanation: "I couldn't map that to a supported change (players, coaches, staff, buses, player room occupancy, hotel cap/tier, departure).",
+  };
 }
 
 const fmt = (n: number) => `$${n.toLocaleString("en-US", { maximumFractionDigits: 0 })}`;

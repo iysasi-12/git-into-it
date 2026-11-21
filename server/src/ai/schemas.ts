@@ -48,6 +48,7 @@ export const WhatIfCommandSchema = z.object({
     "set_hotel_tier",
     "shift_hotel_tier",
     "set_departure",
+    "set_player_occupancy",
     "unsupported",
   ]),
   amount: z.number().nullable().optional(),

@@ -46,6 +46,18 @@ export function scrubDeep<T>(value: T, allowed: number[], notes: string[]): T {
   return value;
 }
 
+const NUMBER_WORDS: Record<string, number> = {
+  one: 1,
+  two: 2,
+  three: 3,
+  four: 4,
+  five: 5,
+  six: 6,
+  seven: 7,
+  eight: 8,
+  nine: 9,
+  ten: 10,
+};
 const enumKey = (s: string) => s.toLowerCase().replace(/[\s_-]/g, "");
 
 /**
@@ -62,5 +74,12 @@ export function canonicalEnum(value: unknown, allowed: readonly string[]): unkno
 
 /** Numbers the user typed (used to verify user-supplied values like budget caps). */
 export function numbersInText(text: string): number[] {
-  return (text.match(NUM_IN_TEXT) ?? []).map(toNum);
+  const digits = (text.match(NUM_IN_TEXT) ?? []).map(toNum);
+
+    const words = text
+    .toLowerCase()
+    .match(/\b(one|two|three|four|five|six|seven|eight|nine|ten)\b/g)
+    ?.map((word) => NUMBER_WORDS[word]) ?? [];
+
+  return [...digits, ...words];
 }
