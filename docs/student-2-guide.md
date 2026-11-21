@@ -247,6 +247,145 @@ Files involved: `shared/src/types.ts`, `server/src/ai/schemas.ts`, `server/src/a
 
 ---
 
+# Phase 2: after D1–D5
+
+D1–D5 are done. Nice work! The app's features are basically finished. The biggest remaining risk is the **live Aivana API**: it's slow (15–35 seconds per call) and doesn't always answer in the exact format we ask for. The lead is tuning the prompts now. Your next tasks make that work safer and make the demo hard to break.
+
+**One rule for all of Phase 2:** don't edit `prompts.ts`, `schemas.ts`, `aiService.ts` or `aivanaClient.ts` in `server/src/ai/`. The lead is changing them. You may *import* from them, and if you think one needs a change, tell the lead.
+
+Do them in order: D6 → D7 → D8, and D9 if there's time.
+
+---
+
+## D6. Record real Aivana answers as tests
+
+**Why:** Every bug the lead has fixed so far came from seeing one real answer that didn't fit. For example, Aivana writes `"adjustplayers"` instead of `"adjust_players"`, and echoes field names like "totalCost 21395" into its text. Right now the only way to find those is to click through the app and read the server log. You'll build a tool that captures real answers in bulk and turns them into tests. Then when the lead changes a prompt to fix one task, the tests show right away whether it broke another. This is called a **regression suite**, and real teams rely on them.
+
+**Before you start:**
+- Pull the latest `main` first. The lead's prompt fixes are merged there, and your recordings depend on the exact prompt wording. Before each later capture run, pull again and ask the lead whether more prompt changes are coming.
+- Ask the lead for the API key **directly** (a DM, not git or the group chat). Put it in your own `.env` at the repo root: copy `.env.example`, set `AIVANA_API_KEY=...` and `AIVANA_MOCK=false`. **Never commit `.env`.** It's already in `.gitignore`; check that `git status` doesn't list it.
+- Each live call takes 15–35 seconds and may cost money or hit a rate limit. Keep each run to about 25 calls, run them one at a time, and ask the lead before running it again.
+
+### Steps
+
+1. **Read how the app calls the AI.** Open `server/src/ai/aiService.ts`. Each task (`parseRequest`, `recommend`, `interpretWhatIf`, `writeMemo`) builds a prompt with a function from `prompts.ts`, sends it with `generate()` from `aivanaClient.ts`, and checks the answer with `callStructured()`. Make sure you can explain each step before writing code.
+
+2. **Write a capture script:** `server/scripts/captureLive.ts`. It builds each prompt the *same way* `aiService.ts` does, calls `generate()`, and saves the **raw** answer text before any repair or retry. That first answer is the one that shows what goes wrong. A starter shape:
+
+   ```ts
+   import { writeFileSync } from "node:fs";
+   import { generate } from "../src/ai/aivanaClient.js";
+   import { prompts } from "../src/ai/prompts.js";
+   import { getDataset } from "../src/data/dataRepository.js";
+   import { buildPlan } from "../src/engine/optionBuilder.js";
+   import { planFacts, memoFacts } from "../src/engine/summary.js";
+
+   type Capture = { task: "parse" | "recommend" | "whatif" | "memo"; input: string; answer: string; capturedAt: string };
+   const out: Capture[] = [];
+
+   const base = { opponentId: "ohio-state", gameDate: "2027-10-09", players: 65, coaches: 8, staff: 4,
+                  departure: "day_before" as const, earliestDepartureTime: "14:00", specialRequests: [] };
+   const plan = buildPlan(base);
+
+   // TODO: parse. For 5 free-text requests, build the prompt exactly like aiService.parseRequest
+   //       (it passes today's date and the list of venue school names).
+   // TODO: whatif. For each demo phrase + 8 of your D4 phrasings, build the context exactly
+   //       like aiService.interpretWhatIf does, then prompts.interpretWhatIf(message, context).
+   // TODO: recommend. prompts.recommend(planFacts(plan)), once or twice.
+   // TODO: memo. prompts.memo(memoFacts(plan, plan.options[1])), once.
+
+   async function capture(task: Capture["task"], input: string, prompt: string) {
+     console.log(`→ ${task}: ${input}`);
+     const answer = await generate(prompt, 60_000); // live calls are slow; allow 60 s
+     out.push({ task, input, answer, capturedAt: new Date().toISOString() });
+   }
+
+   // ...call capture() for each case, one at a time (await each)...
+
+   writeFileSync("src/ai/fixtures/live-answers.json", JSON.stringify(out, null, 2));
+   console.log(`Saved ${out.length} answers.`);
+   ```
+
+   Add a script to `server/package.json`: `"capture-live": "tsx scripts/captureLive.ts"`, and run it with `npm -w server run capture-live`. Note that `npm run typecheck` won't check this file, because `server/tsconfig.json` only includes `src/`. Ask the lead whether to add `scripts` to `include`.
+
+3. **Write the test:** `server/src/ai/liveAnswers.test.ts`. For every saved answer, use the same steps the app uses: `extractJson(answer)` from `guards.ts`, then the matching schema's `safeParse` (`ParsedRequestSchema`, `RecommendationSchema`, `WhatIfCommandSchema` or `MemoSchema` from `schemas.ts`). Use `it.each` like in D4, so each answer gets its own test name.
+   - **For what-if answers,** also check the *meaning*: "Leave 3 players home" should give `adjust_players` with `-3`. Put the expected command next to each phrase in the script, and save it in the fixture.
+   - **For recommend and memo answers,** run `scrubDeep(...)` with `allowedNumbers(facts)` and check how many guard notes it produces. A note means the AI wrote a number that isn't in our facts. Report those to the lead even if the test passes.
+
+4. **Handling failures.** Tests that fail on real answers are the *point*, but `main` must stay green. Add an `expected: "valid" | "known-bad"` field to each fixture. Mark failing answers `"known-bad"` and test that they *do* fail (so when the lead fixes the problem, the test tells you to flip it). In your PR, list every known-bad answer with a one-line note on what's wrong. That list is the lead's to-do list.
+
+**Done when:** about 25 real answers are saved, the test runs in `npm test` without calling the API (it only reads the JSON file), `main` stays green, and your PR lists the known-bad answers. **You'll learn:** writing a script against real code, test fixtures, regression testing, and handling secrets safely.
+
+---
+
+## D7. Try what judges will type
+
+**Why:** The first thing a judge does is type their *own* request, not our demo script. If it fails, the demo stalls in front of them. You'll find those failures before they do.
+
+### Steps
+
+1. Write **20 free-text requests** a judge might type into *Describe it*. Mix them up on purpose:
+   - different opponents, including Toledo (a same-day trip) and Buffalo (a long drive)
+   - misspellings and nicknames: "Ohio st", "the Rockets", "WMU"
+   - missing details: no coach count, no date
+   - relative dates: "next Saturday", "the 14th"
+   - a different sport: "basketball, 15 players, 4 coaches"
+   - a mess: two requests in one, or something that isn't a trip at all
+2. Create `docs/judge-inputs.md` with a table: `# | Input | Expected | Got (mock) | Got (live) | Issue`.
+3. Run each one through the app in **mock mode** first (no key needed). Then run the 10 most interesting ones **live** (they're slow, so be choosy). Write down what filled into the form, what was missing, and whether "Build travel options" worked.
+4. For each problem, open a GitHub issue with the input, what you expected, and what happened. Don't fix parser or prompt bugs yourself. Tag the lead.
+
+**Done when:** 20 rows are filled in, and every problem has an issue linked from the table. **You'll learn:** exploratory testing and writing clear bug reports. A good bug report is a superpower.
+
+---
+
+## D8. Check the demo numbers by hand
+
+**Why:** During the demo, the presenter will say things like "leaving 3 players home saves $643 on Option B." If a judge asks "how do you know that's right?", you should be able to show the hand calculation. You already know how from D1.
+
+### Steps
+
+1. Ask the lead for the **final demo script**: the trip and the exact what-ifs in order. The README's demo script is a starting point, but it may have changed.
+2. In your D1 spreadsheet, add a tab per step: the starting plan, then the plan after each what-if. For each option, write the totals, bus count, rooms and hotel name the screen should show.
+3. Run the demo in the app and compare. Any difference is either a misread rule or a bug. Either way, tell the lead right away.
+4. Make a one-page "cheat sheet" with the key numbers per step, for whoever presents.
+
+**Done when:** every number in the demo script is checked, and the cheat sheet is shared with the team.
+
+---
+
+## D9. Stretch: show how long the AI has been thinking (your first frontend task)
+
+**Why:** Live Aivana calls take 15–35 seconds. During that wait, a still spinner looks like a crash to a judge. A counter like *"Aivana is thinking… 12s"* shows the app is working.
+
+**You'll learn:** React's `useEffect` and cleanup, which are needed any time you use a timer.
+
+### Steps
+
+1. In `client/src/components/ui.tsx`, add a small hook that counts seconds while something is loading:
+   ```tsx
+   export function useElapsedSeconds(active: boolean): number {
+     const [seconds, setSeconds] = useState(0);
+     useEffect(() => {
+       if (!active) { setSeconds(0); return; }
+       const id = setInterval(() => setSeconds((s) => s + 1), 1000);
+       return () => clearInterval(id); // cleanup: stop the timer when loading ends
+     }, [active]);
+     return seconds;
+   }
+   ```
+   Ask yourself: what would happen without the `return () => clearInterval(id)` line?
+2. Use it in each place the app waits on the AI:
+   - `App.tsx`: the "Aivana is reviewing the options…" card (`loading.recommend`)
+   - `WhatIfChat.tsx`: the "Recalculating…" line (`loading.whatif`)
+   - `RequestPanel.tsx`: the *Extract details* button (`loading.parse`)
+   - the memo: `loading.memo` (the *Generate travel memo* button in `OptionCard.tsx`)
+3. Show the count only after about 3 seconds, so fast mock-mode responses don't flash a counter.
+
+**Done when:** all four waits show a counter live, nothing flickers in mock mode, and `npm run typecheck` passes. Add a screenshot to the PR.
+
+---
+
 ## Demo time (H20+)
 
 At the demo **you present the part you built.** Prepare 60 seconds on:

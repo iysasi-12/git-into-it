@@ -35,7 +35,7 @@ client (React+TS+Tailwind v4, Vite) --/api--> server/src/routes/api.ts
 ## Team and ownership (2 people; plan in docs/)
 - **Lead (senior, the person usually driving Claude Code):** finishing the sample dataset, live Aivana and prompt tuning, PR reviews, deploy. Guide: `docs/lead-guide.md`.
 - **Lead also owns the frontend tasks F3–F5** (mobile, skeletons, copy memo) from `docs/student-1-guide.md`. Student 1 left on 2026-11-21 after F1 and F2 were merged. These are normal tasks now, so implement them directly when asked.
-- **Student 2 (first-year, data/tests):** `validateData.ts`, `engine.test.ts` edge cases, `heuristics.ts` phrasings. Guide: `docs/student-2-guide.md`.
+- **Student 2 (Mika, first-year, data/tests):** D1–D5 done. Phase 2 tasks D6–D9: the live-answer capture script and `liveAnswers.test.ts` fixtures, `docs/judge-inputs.md`, hand-checked demo numbers, and the AI wait counter (`useElapsedSeconds`). Guide: `docs/student-2-guide.md`. She doesn't edit `prompts.ts`, `schemas.ts`, `aiService.ts` or `aivanaClient.ts`; those are the lead's while L3 is in progress.
 - Student 2's tasks are learning tasks. **Do not implement them unless the lead explicitly asks.** When reviewing their work, explain and point the way; don't rewrite it.
 
 ## Current status / gotchas

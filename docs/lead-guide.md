@@ -147,10 +147,24 @@ Then, in the demo: "Here's an AI sentence with a made-up price. Here's what user
 
 ---
 
+## Phase 2: after the first round of tasks
+
+Status: D1–D5 and F1–F3 are merged. Oliver (Student 1) left after F2. Mika's next tasks are **D6–D9** in `docs/student-2-guide.md`. The idea is to put the team's effort into the remaining risk, live Aivana, and the demo.
+
+Your part:
+1. **Keep prompt changes merged before Mika records.** `israel/L3-prompts` is already merged (PR #11). Her recorded answers depend on the exact prompt wording, so merge any further prompt fixes before she starts a capture run.
+2. **Give her the API key directly** (a DM), and agree on a call budget. A D6 run is about 25 calls at 15–35 seconds each. Check Aivana's rate limits first.
+3. **Treat D6's "known-bad" list as your L3 to-do list.** After each prompt change, flip the fixed fixtures to `"valid"`. If one flips the *wrong* way, your change broke another task.
+4. **Answer D7 issues quickly.** Each is a judge's first-try input that fails. Fix parser and prompt issues yourself; she shouldn't touch `prompts.ts`.
+5. **Give her the final demo script for D8** as soon as it's settled.
+6. **Start T1 (slides) and T4 (backup video) now,** not at H20. The features are done; these are what usually get squeezed at the end.
+
+**F4 and F5 (yours since Oliver left):** cut F4, since options now appear instantly and the slow part is the AI wait, which D9 covers. Do F5 only if there's spare time. If Oliver comes back, give him D9 instead of Mika.
+
 ## Running the team
 
 - **Check-ins every 4 hours (5 minutes):** what's done, what's blocked, and what to cut.
-- **What to cut first:** L5, L6, F5, D5. Never cut: L2, L3, F1, F2, D3, demo rehearsal.
+- **What to cut first:** L5, L6, F4, F5, D9. Never cut: L3, D6, D8, demo rehearsal.
 - **Gates:** data frozen by **H3** (H6 at the latest), live Aivana by **H12**, feature freeze at **H20**. After H20, only bug fixes.
 - **Stuck rule:** a student stuck for more than 30 minutes asks you, and you pair for 10 minutes. Guide them; don't take the keyboard.
 - Use the shared task doc to tick off tasks as they merge.
@@ -164,4 +178,4 @@ Then, in the demo: "Here's an AI sentence with a made-up price. Here's what user
 - [ ] Backup video recorded (task T4)
 - [ ] Game dates in demo prompts include the year
 
-**Pitch (5 slides max):** the problem → live demo → "AI talks, app calculates" architecture → the guardrail → what's next. Students present their own features: Student 1 shows the chart and deltas, Student 2 shows the hand-calculation check and the edge-case tests.
+**Pitch (5 slides max):** the problem → live demo → "AI talks, app calculates" architecture → the guardrail → what's next. Mika presents her own work: the hand-calculated demo numbers (D8) and the live-answer tests (D6). You present the chart and deltas that Oliver built, and credit him.

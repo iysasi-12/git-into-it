@@ -1,5 +1,7 @@
 # Student 1 Guide: Frontend
 
+> **Status (2026-11-21):** F1 and F2 were done by Oliver, who has since left the team. The lead did F3. F4 is cut, and F5 is optional for the lead. If you're picking up frontend work now, start with **D9** (AI wait counter) in `docs/student-2-guide.md`.
+
 Welcome! You own **what the judges see.** Judges spend about three minutes on our project, and most of that time they're looking at the screen. A clear chart and instant feedback after a what-if can win the room.
 
 You'll also learn the core ideas of React (components, props, state) by building real features. Those ideas carry over to almost every frontend job.
