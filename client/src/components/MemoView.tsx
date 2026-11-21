@@ -1,15 +1,43 @@
+import { useState } from "react";
 import type { MemoResponse } from "@app/shared";
 import { money, money2 } from "../lib/format";
 import { Button, SourceBadge } from "./ui";
 
 export function MemoView({ data, onClose }: { data: MemoResponse; onClose: () => void }) {
   const { memo, option, plan } = data;
+  const [copied, setCopied] = useState(false);
+  async function handleCopy() {
+    const text = `
+  ${memo.title}
+
+  ${memo.summary}
+
+  ITINERARY
+  ${memo.itinerary
+    .map((e) => `${e.day} ${e.time} - ${e.activity}`)
+    .join("\n")}
+
+  DEPARTURE REMINDERS
+  ${memo.departureReminders.join("\n")}
+  `;
+
+    await navigator.clipboard.writeText(text);
+
+    setCopied(true);
+
+    setTimeout(() => {
+      setCopied(false);
+    }, 2000);
+  }
   return (
     <div className="print-only-area fixed inset-0 z-50 overflow-y-auto bg-black/40 p-4" onClick={onClose}>
       <article className="mx-auto max-w-3xl rounded-xl bg-white p-4 shadow-xl sm:p-8" onClick={(e) => e.stopPropagation()}>
         <div className="no-print mb-4 flex items-center justify-between">
           <SourceBadge source={memo.source} />
           <div className="flex gap-2">
+            <Button variant="secondary" onClick={handleCopy}>
+              {copied ? "Copied!" : "Copy"}
+            </Button>
             <Button variant="secondary" onClick={() => window.print()}>
               Print
             </Button>
