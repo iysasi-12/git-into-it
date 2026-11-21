@@ -13,7 +13,11 @@ export function CostChart({ options }: Props) {
         <div key={option.id}>
           <p className="font-medium">{option.label}</p>
           <ul>
-            {option            ))}
+            {option.lineItems.map((item, index) => (
+              <li key={index}>
+                {item.category}: {money(item.total)}
+              </li>
+            ))}
           </ul>
         </div>
       ))}
