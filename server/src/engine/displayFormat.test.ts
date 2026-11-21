@@ -15,3 +15,9 @@ describe("display formats", () => {
     expect(usTime("23:45")).toBe("11:45 PM ET");
   });
 });
+
+describe("time zone labels", () => {
+  it("labels the zone it is given", () => {
+    expect(usTime("15:30", "CT")).toBe("3:30 PM CT");
+  });
+});

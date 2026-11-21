@@ -18,6 +18,9 @@ export interface Origin {
   state: string;
 }
 
+/** US time zones the dataset uses. Campus (Bowling Green, OH) is Eastern. */
+export type TimeZone = "ET" | "CT";
+
 export interface Venue {
   id: string;
   school: string;
@@ -31,6 +34,8 @@ export interface Venue {
   driveHours: number;
   /** Alternate names used to match free text ("OSU", "Buckeyes"). */
   aliases: string[];
+  /** Local time zone at the stadium. Omitted means Eastern, same as campus. */
+  timeZone?: TimeZone;
 }
 
 export interface Hotel {
@@ -170,8 +175,10 @@ export interface MealSlot {
 }
 
 export interface TimelineEvent {
-  date: string; // YYYY-MM-DD
-  time: string; // HH:MM
+  date: string; // YYYY-MM-DD, local to `timeZone`
+  time: string; // HH:MM, local to `timeZone`
+  /** Where the event happens: campus events are ET, events at the venue use its zone. */
+  timeZone: TimeZone;
   event: string;
 }
 

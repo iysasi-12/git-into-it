@@ -226,3 +226,31 @@ describe("show the math (line item basis)", () => {
             }
   });
 });
+
+describe("venue time zones", () => {
+  // Hand-derived. DeKalb is CT (one hour behind campus). Drive 4.6h = 276 min.
+  // Depart 14:00 ET -> arrive 18:36 ET, rounded to 18:30 ET = 17:30 CT.
+  // Kickoff 15:30 CT = 16:30 ET. Leave 4.5h after kickoff = 20:00 CT (21:00 ET).
+  // Home: 21:00 ET + 276 min = 01:36 ET, rounded to 01:30 ET next day.
+  const plan = buildPlan({ ...base, opponentId: "northern-illinois", gameTime: "15:30" });
+  const B = plan.options[1];
+
+  it("shows venue events in CT and campus events in ET", () => {
+    expect(B.timeline.map((e) => `${e.date} ${e.time} ${e.timeZone} ${e.event}`)).toEqual([
+      "2026-10-09 13:30 ET Team reports to bus loading area",
+      "2026-10-09 14:00 ET Buses depart for DeKalb, IL",
+      `2026-10-09 17:30 CT Arrive and check in at ${B.hotel!.name}`,
+      "2026-10-09 18:30 CT Team dinner",
+      "2026-10-10 08:00 CT Team breakfast",
+      "2026-10-10 11:30 CT Pre-game meal",
+      "2026-10-10 12:30 CT Depart hotel for Huskie Stadium",
+      "2026-10-10 15:30 CT Kickoff at Huskie Stadium",
+      "2026-10-10 20:00 CT Buses depart for home (post-game meal on board)",
+      "2026-10-11 01:30 ET Estimated arrival back on campus",
+    ]);
+  });
+
+  it("keeps Eastern venues entirely in ET", () => {
+    expect(buildPlan(base).options[1].timeline.every((e) => e.timeZone === "ET")).toBe(true);
+  });
+});

@@ -12,6 +12,7 @@ const VenueSchema = z.object({
   distanceMiles: z.number().positive(),
   driveHours: z.number().positive(),
   aliases: z.array(z.string().min(1)),
+  timeZone: z.enum(["ET", "CT"]).optional(),
 });
 
 const HotelSchema = z.object({
