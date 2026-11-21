@@ -52,6 +52,13 @@ function check(c: Capture): { ok: boolean; reason: string; data?: unknown } {
     if (day !== "game_day") return { ok: false, reason: `meaning: expected day=game_day, got ${String(day)}` };
   }
 
+  if (c.task === "recommend" || c.task === "memo") {
+    const facts = c.task === "recommend" ? planFacts(plan) : memoFacts(plan, plan.options[1]);
+    const notes: string[] = [];
+    scrubDeep(r.data, allowedNumbers(facts), notes);
+    if (notes.length) return { ok: false, reason: `numbers: the AI wrote numbers that are not in our facts: ${notes.join("; ")}` };
+  }
+
   return { ok: true, reason: "", data: r.data };
 }
 
@@ -72,14 +79,3 @@ describe("live Aivana answers", () => {
   });
 });
 
-describe("live Aivana answers: invented numbers", () => {
-  it.each(captures.filter((c) => c.task === "recommend" || c.task === "memo"))("$task: $input", (c) => {
-    const result = check(c);
-    if (!result.ok) return; // already reported above
-    const facts = c.task === "recommend" ? planFacts(plan) : memoFacts(plan, plan.options[1]);
-    const notes: string[] = [];
-    scrubDeep(result.data, allowedNumbers(facts), notes);
-    if (notes.length) console.warn(`[guard] ${c.task} had ${notes.length} note(s):`, notes);
-    expect(Array.isArray(notes)).toBe(true); // informational: report any notes to the lead
-  });
-});
