@@ -1,6 +1,6 @@
 # Student 1 Guide: Frontend
 
-> **Status (2026-11-21):** Oliver did F1 and F2, left the team, and rejoined the same day. While he was away the lead did F3 (mobile) and F4 (skeletons). Oliver is finishing **F5** in PR #19. After F5, check with the lead before starting anything else.
+> **Status (2026-11-21):** Oliver did F1 and F2, left the team, and rejoined the same day. While he was away the lead did F3 (mobile) and F4 (skeletons). Oliver is finishing **F5** in PR #19. After F5, do **D9** (AI wait counter); its spec is in `docs/student-2-guide.md`.
 
 Welcome! You own **what the judges see.** Judges spend about three minutes on our project, and most of that time they're looking at the screen. A clear chart and instant feedback after a what-if can win the room.
 

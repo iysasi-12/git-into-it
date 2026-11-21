@@ -34,8 +34,8 @@ client (React+TS+Tailwind v4, Vite) --/api--> server/src/routes/api.ts
 
 ## Team and ownership (3 people; plan in docs/)
 - **Lead (senior, the person usually driving Claude Code):** finishing the sample dataset, live Aivana and prompt tuning, PR reviews, deploy. Guide: `docs/lead-guide.md`.
-- **Student 1 (Oliver, first-year, frontend):** F1 and F2 done (PR #3). Oliver left on 2026-11-21 and rejoined the same day. While he was away the lead did F3 (mobile) and F4 (skeletons). Oliver is finishing F5 (copy memo as text) in PR #19. Guide: `docs/student-1-guide.md`.
-- **Student 2 (Mika, first-year, data/tests):** D1–D5 done. Phase 2 tasks D6–D9: the live-answer capture script and `liveAnswers.test.ts` fixtures, `docs/judge-inputs.md`, hand-checked demo numbers, and the AI wait counter (`useElapsedSeconds`). Guide: `docs/student-2-guide.md`. She doesn't edit `prompts.ts`, `schemas.ts`, `aiService.ts` or `aivanaClient.ts`; those are the lead's while L3 is in progress.
+- **Student 1 (Oliver, first-year, frontend):** F1 and F2 done (PR #3). Oliver left on 2026-11-21 and rejoined the same day. While he was away the lead did F3 (mobile) and F4 (skeletons). Oliver is finishing F5 (copy memo as text) in PR #19, then does D9: the AI wait counter (`useElapsedSeconds`), specced in `docs/student-2-guide.md`. Guide: `docs/student-1-guide.md`.
+- **Student 2 (Mika, first-year, data/tests):** D1–D5 done. Phase 2 tasks D6–D8: the live-answer capture script and `liveAnswers.test.ts` fixtures, `docs/judge-inputs.md`, and hand-checked demo numbers. Guide: `docs/student-2-guide.md`. She doesn't edit `prompts.ts`, `schemas.ts`, `aiService.ts` or `aivanaClient.ts`; those are the lead's while L3 is in progress.
 - Student tasks (Oliver's F-tasks and Mika's D-tasks) are learning tasks. **Do not implement them unless the lead explicitly asks.** When reviewing their work, explain and point the way; don't rewrite it.
 
 ## Current status / gotchas
