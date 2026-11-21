@@ -1,6 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import type { Planner } from "../hooks/usePlanner";
-import { Button, Card, SourceBadge, Spinner } from "./ui";
+import {
+  Button,
+  Card,
+  SourceBadge,
+  Spinner,
+  useElapsedSeconds,
+} from "./ui";
 
 const SUGGESTIONS = ["Leave 3 players home", "Cap hotel budget at $7000", "Use one fewer bus", "Upgrade hotel quality"];
 
@@ -8,6 +14,9 @@ export function WhatIfChat({ planner }: { planner: Planner }) {
   const [text, setText] = useState("");
   const endRef = useRef<HTMLDivElement>(null);
   const busy = planner.loading.whatif || planner.loading.plan;
+  const whatIfSeconds = useElapsedSeconds(
+  planner.loading.whatif
+);
 
   // Braces matter: an effect may only return a cleanup function, and newer Chrome
   // returns a Promise from scrollIntoView, which React then fails to call ("destroy is not a function").
@@ -52,7 +61,10 @@ export function WhatIfChat({ planner }: { planner: Planner }) {
         ))}
         {planner.loading.whatif && (
           <div className="flex items-center gap-2 text-sm text-stone-500">
-            <Spinner /> Recalculating…
+            <Spinner />
+            Recalculating…
+            {whatIfSeconds >= 3 &&
+              ` ${whatIfSeconds}s`}
           </div>
         )}
         <div ref={endRef} />

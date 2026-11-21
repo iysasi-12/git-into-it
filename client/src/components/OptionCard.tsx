@@ -1,7 +1,10 @@
 import { useState } from "react";
 import type { TravelOption } from "@app/shared";
 import { DEPARTURE_LABELS, money, money2, prettyDate, prettyTime } from "../lib/format";
-import { Button } from "./ui";
+import {
+  Button,
+  useElapsedSeconds,
+} from "./ui";
 
 interface Props {
   option: TravelOption;
@@ -12,10 +15,22 @@ interface Props {
   memoLoading: boolean;
 }
 
-export function OptionCard({ option: o, previousOption, recommended, cheapest, onMemo, memoLoading }: Props) {
+export function OptionCard({
+  option: o,
+  previousOption,
+  recommended,
+  cheapest,
+  onMemo,
+  memoLoading,
+}: Props) {
   const [open, setOpen] = useState(false);
+  const memoSeconds = useElapsedSeconds(memoLoading);
   const delta = o.totalCost - cheapest;
-  const costChange = previousOption ? o.totalCost - previousOption.totalCost : 0;
+  const costChange =
+  previousOption
+    ? o.totalCost - previousOption.totalCost
+    : 0;
+
 
   return (
     <article
@@ -33,10 +48,22 @@ export function OptionCard({ option: o, previousOption, recommended, cheapest, o
 
       <div className="mb-3">
         <div className="flex items-center gap-2">
-          <p className="text-3xl font-extrabold text-ink">{money(o.totalCost)}</p>
-          {costChange < 0 && <span className="text-sm font-semibold text-green-600">▼ {money(Math.abs(costChange))}</span>}
-          {costChange > 0 && <span className="text-sm font-semibold text-red-600">▲ {money(costChange)}</span>}
-        </div>
+  <p className="text-3xl font-extrabold text-ink">
+    {money(o.totalCost)}
+  </p>
+
+  {costChange < 0 && (
+    <span className="text-sm font-semibold text-green-600">
+      ▼ {money(Math.abs(costChange))}
+    </span>
+  )}
+
+  {costChange > 0 && (
+    <span className="text-sm font-semibold text-red-600">
+      ▲ {money(costChange)}
+    </span>
+  )}
+</div>
         <p className="text-xs text-stone-500">
           Estimate · {money(o.costPerTraveler)} per traveler{delta > 0 && <span className="text-stone-400"> · +{money(delta)} vs lowest</span>}
         </p>
@@ -87,7 +114,8 @@ export function OptionCard({ option: o, previousOption, recommended, cheapest, o
         {open ? "Hide" : "Show"} cost breakdown
       </button>
       {open && (
-        <table className="mb-3 w-full text-xs">
+  <div className="overflow-x-auto">
+    <table className="mb-3 w-full text-xs">
           <tbody>
             {o.lineItems.map((li, i) => (
               <tr key={i} className="border-t border-stone-100">
@@ -108,9 +136,24 @@ export function OptionCard({ option: o, previousOption, recommended, cheapest, o
         </table>
       )}
 
-      <Button variant={recommended ? "primary" : "secondary"} className="mt-auto" onClick={onMemo} loading={memoLoading}>
-        Generate travel memo
-      </Button>
+      <Button
+  variant={
+    recommended
+      ? "primary"
+      : "secondary"
+  }
+  className="mt-auto"
+  onClick={onMemo}
+  loading={memoLoading}
+>
+  {memoLoading
+    ? `Generating memo${
+        memoSeconds >= 3
+          ? ` ${memoSeconds}s`
+          : ""
+      }`
+    : "Generate travel memo"}
+</Button>
     </article>
   );
 }

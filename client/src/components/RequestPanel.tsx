@@ -2,7 +2,11 @@ import { useState } from "react";
 import type { DepartureDay, TripRequest } from "@app/shared";
 import type { Planner } from "../hooks/usePlanner";
 import { DEPARTURE_LABELS } from "../lib/format";
-import { Button, Card } from "./ui";
+import {
+  Button,
+  Card,
+  useElapsedSeconds,
+} from "./ui";
 
 const SAMPLE =
   "Plan travel for our game at Ohio State on Saturday, October 9, 2027. 65 players, 8 coaches, 4 staff. Leave Friday after classes. We need a vegetarian option at team meals.";
@@ -30,8 +34,20 @@ export function RequestPanel({ planner }: { planner: Planner }) {
   );
 }
 
-function FreeTextInput({ planner, onDone }: { planner: Planner; onDone: () => void }) {
+function FreeTextInput({
+  planner,
+  onDone,
+}: {
+  planner: Planner;
+  onDone: () => void;
+}) {
   const [text, setText] = useState("");
+
+  const parseSeconds =
+    useElapsedSeconds(
+      planner.loading.parse
+    );
+
   const submit = async () => {
     if (await planner.parseText(text)) onDone();
   };
@@ -40,8 +56,18 @@ function FreeTextInput({ planner, onDone }: { planner: Planner; onDone: () => vo
       <p className="text-sm text-stone-600">Describe the trip in plain English. Aivana extracts the details into the form for you to confirm.</p>
       <textarea className={`${input} h-36`} value={text} onChange={(e) => setText(e.target.value)} placeholder={SAMPLE} />
       <div className="flex flex-wrap gap-2">
-        <Button onClick={submit} loading={planner.loading.parse} disabled={text.trim().length < 5}>
-          Extract details
+        <Button
+          onClick={submit}
+          loading={planner.loading.parse}
+          disabled={text.trim().length < 5}
+        >
+          {planner.loading.parse
+            ? `Extracting${
+                parseSeconds >= 3
+                  ? ` ${parseSeconds}s`
+                  : ""
+              }`
+            : "Extract details"}
         </Button>
         <Button variant="secondary" onClick={() => setText(SAMPLE)}>
           Use sample
