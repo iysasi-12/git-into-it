@@ -16,7 +16,10 @@ HARD RULES (never break these):
 3. Refer to travel packages only by their option IDs ("A", "B", "C") and labels.
 4. All costs are estimates computed by the application; describe them as estimates.
 5. Respond with ONLY a single JSON object that matches the JSON SCHEMA. No markdown, no code fences, no commentary.
-6. Copy enum values exactly as the JSON SCHEMA spells them, including underscores (e.g. "day_before", "adjust_players").`;
+6. Copy enum values exactly as the JSON SCHEMA spells them, including underscores (e.g. "day_before", "adjust_players").
+7. Free-text fields (sentences, pros, cons, notes) are read by coaches, not programmers:
+   - Write money with a dollar sign and thousands separators: "$21,395", "$86.68". Never a bare "21395".
+   - Never use INPUT field names or code values in sentences. Say "total estimate", not "totalCost"; "requested departure", not "requestedDeparture"; "the day before", not "day_before" or "daybefore"; "game day", not "game_day".`;
 
 function build(task: string, schema: string, input: unknown): string {
   return `${RULES}
@@ -69,7 +72,7 @@ Actions:
 - set_hotel_budget_cap: "amount" = the dollar cap the USER stated (e.g. "cap hotel at $4000" -> 4000). Never make up a cap.
 - set_player_occupancy: "amount" = the number of players per room the USER stated (e.g. "put 3 players per room" -> 3). Never guess, change, or make up this number.
 - set_hotel_tier: "tier" = economy | midscale | upscale when the user names a level.
-- shift_hotel_tier: "amount" = +1 to upgrade hotel quality, -1 to downgrade.
+- shift_hotel_tier: "amount" = +1 to upgrade hotel quality, -1 to downgrade (e.g. "upgrade hotel quality" -> +1, "cheaper hotels" -> -1). It moves every option's hotel one level from that option's own tier; an option with no hotel (hotelTier null, a same-day trip) is simply left as is. Never answer "unsupported" for an upgrade/downgrade request.
 - set_departure: "departure" = game_day | day_before | two_days_before.
 - unsupported: anything else; explain briefly in "explanation".
 "explanation": one short sentence restating the change in plain English.
