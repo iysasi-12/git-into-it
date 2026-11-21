@@ -9,7 +9,11 @@ export function WhatIfChat({ planner }: { planner: Planner }) {
   const endRef = useRef<HTMLDivElement>(null);
   const busy = planner.loading.whatif || planner.loading.plan;
 
-  useEffect(() => endRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" }), [planner.chat.length]);
+  // Braces matter: an effect may only return a cleanup function, and newer Chrome
+  // returns a Promise from scrollIntoView, which React then fails to call ("destroy is not a function").
+  useEffect(() => {
+    endRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }, [planner.chat.length]);
 
   const send = (msg: string) => {
     if (!msg.trim() || busy) return;
