@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { allowedNumbers, extractJson, scrubText } from "./guards.js";
+import { allowedNumbers, extractJson, numbersInText, scrubText } from "./guards.js";
 import { heuristicWhatIf } from "./heuristics.js";
 
 describe("guards", () => {
@@ -48,7 +48,22 @@ describe("what-if heuristics", () => {
     ["Put 3 players per room", { action: "set_player_occupancy", amount: 3 }],
     ["Put only 3 players per room", { action: "set_player_occupancy", amount: 3 }],
     ["Fit two players per room", { action: "set_player_occupancy", amount: 2 }],
+    ["3 players per room", { action: "set_player_occupancy", amount: 3 }],
+    ["Make it 3 players per room", { action: "set_player_occupancy", amount: 3 }],
+    ["Bring 3 players per room", { action: "set_player_occupancy", amount: 3 }],
+    ["Max 3 players per room", { action: "set_player_occupancy", amount: 3 }],
   ])("%s", (msg, expected) => {
     expect(heuristicWhatIf(msg)).toMatchObject(expected);
+  });
+});
+
+describe("numbersInText", () => {
+  it.each([
+    ["Put 3 players per room", [3]],
+    ["Fit two players per room", [2]],
+    ["Make it ten players per room", [10]],
+    ["Use 2 rooms for 3 players", [2, 3]],
+  ])("extracts numbers from %s", (message, expected) => {
+    expect(numbersInText(message)).toEqual(expected);
   });
 });

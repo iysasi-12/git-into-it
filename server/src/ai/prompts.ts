@@ -66,6 +66,7 @@ Actions:
 - adjust_players / adjust_coaches / adjust_staff: "amount" = signed change (e.g. "leave 3 players home" -> -3).
 - adjust_buses: "amount" = signed change in bus count (e.g. "one fewer bus" -> -1).
 - set_hotel_budget_cap: "amount" = the dollar cap the USER stated (e.g. "cap hotel at $4000" -> 4000). Never make up a cap.
+- set_player_occupancy: "amount" = the number of players per room the USER stated (e.g. "put 3 players per room" -> 3). Never guess, change, or make up this number.
 - set_hotel_tier: "tier" = economy | midscale | upscale when the user names a level.
 - shift_hotel_tier: "amount" = +1 to upgrade hotel quality, -1 to downgrade.
 - set_departure: "departure" = game_day | day_before | two_days_before.

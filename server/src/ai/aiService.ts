@@ -137,6 +137,25 @@ export async function interpretWhatIf(message: string, plan: PlanResult): Promis
       };
     }
   }
+
+  // Guard: player occupancy must match a number the USER typed.
+  if (command.action === "set_player_occupancy") {
+    const typed = numbersInText(message);
+
+    if (
+      command.amount == null ||
+      !typed.some((n) => n === command.amount)
+    ) {
+      return {
+        command: {
+          action: "unsupported",
+          explanation: "Please state the number of players per room explicitly.",
+        },
+        source,
+      };
+    }
+  }
+
   return { command, source };
 }
 

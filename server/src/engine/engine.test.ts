@@ -89,35 +89,37 @@ describe("buildPlan", () => {
     expect(p.options[0].nights).toBe(1);
   });
 
-    it("what-if: change player room occupancy", () => {
-    const p = buildPlan(base, [
-      {
-        action: "set_player_occupancy",
-        amount: 3,
-        explanation: "Put 3 players per room",
-      },
-    ]);
-
-    const B = p.options[1];
-
+  it("what-if: 3 players per room, exact totals", () => {
+    const p = buildPlan(base, [{ action: "set_player_occupancy", amount: 3, explanation: "" }]);
+    const [A, B, C] = p.options;
     expect(B.rooms.players).toBe(22);
     expect(B.rooms.coaches).toBe(8);
     expect(B.rooms.staff).toBe(2);
+    expect(B.rooms.drivers).toBe(2);
     expect(B.rooms.total).toBe(34);
-    expect(B.totalCost).toBeLessThan(21395);
+    expect(B.totalCost).toBe(19426);
+    expect(C.totalCost).toBe(27625);
+    expect(A.totalCost).toBe(6674);
   });
 
-  it("what-if: reject invalid player occupancy", () => {
-    const p = buildPlan(base, [
-      {
-        action: "set_player_occupancy",
-        amount: 0,
-        explanation: "Put zero players per room",
-      },
-    ]);
-
+  it("what-if: reject player occupancy of 0", () => {
+    const p = buildPlan(base, [{ action: "set_player_occupancy", amount: 0, explanation: "" }]);
     expect(p.options[1].rooms.players).toBe(33);
-    expect(p.notes.join(" ")).toMatch(/positive whole number/);
+    expect(p.notes.join(" ")).toMatch(/1 to 4/);
+  });
+
+  it("what-if: reject player occupancy above 4", () => {
+    const p = buildPlan(base, [{ action: "set_player_occupancy", amount: 5, explanation: "" }]);
+    expect(p.options[1].rooms.players).toBe(33);
+    expect(p.options[1].totalCost).toBe(21395);
+    expect(p.notes.join(" ")).toMatch(/1 to 4/);
+  });
+
+  it("what-if: 4 players per room is the maximum allowed", () => {
+    const p = buildPlan(base, [{ action: "set_player_occupancy", amount: 4, explanation: "" }]);
+    expect(p.options[1].rooms.players).toBe(17);
+    expect(p.options[1].totalCost).toBe(18531);
+    expect(p.options[2].totalCost).toBe(26330);
   });
 
 });

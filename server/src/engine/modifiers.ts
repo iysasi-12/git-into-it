@@ -56,10 +56,10 @@ export function applyModifiers(base: TripRequest, modifiers: WhatIfCommand[] = [
         if (m.departure) s.departureOverride = m.departure;
         break;
       case "set_player_occupancy":
-        if (Number.isInteger(m.amount) && (m.amount ?? 0) > 0) {
+        if (Number.isInteger(m.amount) && (m.amount ?? 0) >= 1 && (m.amount ?? 0) <= 4) {
           s.playerOccupancyOverride = m.amount!;
         } else {
-          s.notes.push("Player occupancy must be a positive whole number.");
+          s.notes.push("Player occupancy must be a whole number from 1 to 4.");
         }
         break;
       case "unsupported":

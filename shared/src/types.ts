@@ -117,7 +117,11 @@ export type WhatIfAction =
 
 export interface WhatIfCommand {
   action: WhatIfAction;
-/** Signed delta for adjust_* / shift_hotel_tier; dollar cap for set_hotel_budget_cap; players per room for set_player_occupancy. */  amount?: number;
+  /**
+     * Signed delta for adjust_* / shift_hotel_tier; dollar cap for
+     * set_hotel_budget_cap; players per room for set_player_occupancy.
+     */
+  amount?: number;
   tier?: HotelTier;
   departure?: DepartureDay;
   /** Short human-readable restatement of the command. */
