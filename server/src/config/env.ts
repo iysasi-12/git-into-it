@@ -17,9 +17,10 @@ const EnvSchema = z.object({
     .string()
     .optional()
     .transform((v) => v === "true" || v === "1"),
-  AIVANA_TIMEOUT_MS: z.coerce.number().int().positive().default(20000),
-  // Recommend and memo take 15-35 s live; recommend runs in the background, so it can wait longer.
-  AIVANA_SLOW_TIMEOUT_MS: z.coerce.number().int().positive().default(45000),
+  // Live latency 2026-11-21: parse ~8 s, what-if 8-20 s. 20 s caused fallbacks; 30 s ran the demo clean.
+  AIVANA_TIMEOUT_MS: z.coerce.number().int().positive().default(30000),
+  // Recommend (34-43 s) and memo (26-32 s) live; recommend runs in the background, so it can wait longer.
+  AIVANA_SLOW_TIMEOUT_MS: z.coerce.number().int().positive().default(60000),
   PORT: z.coerce.number().int().positive().default(3001),
 });
 
