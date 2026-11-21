@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { allowedNumbers, extractJson, numbersInText, scrubText } from "./guards.js";
-import { allowedNumbers, canonicalEnum, extractJson, scrubText } from "./guards.js";
+import { allowedNumbers, canonicalEnum, extractJson, numbersInText, scrubText } from "./guards.js";
 import { heuristicWhatIf } from "./heuristics.js";
 import { ParsedRequestSchema, WhatIfCommandSchema } from "./schemas.js";
 
