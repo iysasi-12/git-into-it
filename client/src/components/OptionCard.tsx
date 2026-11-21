@@ -1,10 +1,7 @@
 import { useState } from "react";
 import type { TravelOption } from "@app/shared";
 import { DEPARTURE_LABELS, money, money2, prettyDate, prettyTime } from "../lib/format";
-import {
-  Button,
-  useElapsedSeconds,
-} from "./ui";
+import { Button, useElapsedSeconds, } from "./ui";
 
 interface Props {
   option: TravelOption;
@@ -26,10 +23,7 @@ export function OptionCard({
   const [open, setOpen] = useState(false);
   const memoSeconds = useElapsedSeconds(memoLoading);
   const delta = o.totalCost - cheapest;
-  const costChange =
-  previousOption
-    ? o.totalCost - previousOption.totalCost
-    : 0;
+  const costChange = previousOption ? o.totalCost - previousOption.totalCost : 0;
 
 
   return (
@@ -114,7 +108,6 @@ export function OptionCard({
         {open ? "Hide" : "Show"} cost breakdown
       </button>
       {open && (
-  <div className="overflow-x-auto">
     <table className="mb-3 w-full text-xs">
           <tbody>
             {o.lineItems.map((li, i) => (
@@ -137,21 +130,13 @@ export function OptionCard({
       )}
 
       <Button
-  variant={
-    recommended
-      ? "primary"
-      : "secondary"
-  }
+  variant={recommended ? "primary" : "secondary"}
   className="mt-auto"
   onClick={onMemo}
   loading={memoLoading}
 >
   {memoLoading
-    ? `Generating memo${
-        memoSeconds >= 3
-          ? ` ${memoSeconds}s`
-          : ""
-      }`
+    ? `Generating memo${memoSeconds >= 3 ? ` ${memoSeconds}s` : ""}`
     : "Generate travel memo"}
 </Button>
     </article>
