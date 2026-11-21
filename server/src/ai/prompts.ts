@@ -73,7 +73,7 @@ Actions:
 - set_player_occupancy: "amount" = the number of players per room the USER stated (e.g. "put 3 players per room" -> 3). Never guess, change, or make up this number.
 - set_hotel_tier: "tier" = economy | midscale | upscale when the user names a level.
 - shift_hotel_tier: "amount" = +1 to upgrade hotel quality, -1 to downgrade (e.g. "upgrade hotel quality" -> +1, "cheaper hotels" -> -1). It moves every option's hotel one level from that option's own tier; an option with no hotel (hotelTier null, a same-day trip) is simply left as is. Never answer "unsupported" for an upgrade/downgrade request.
-- set_departure: "departure" = game_day | day_before | two_days_before.
+- set_departure: "departure" = game_day | day_before | two_days_before. If the user names a weekday ("leave Thursday"), pick the choice whose day in CURRENT_PLAN.departureWeekdays matches it. Only a weekday not listed there is "unsupported".
 - unsupported: anything else; explain briefly in "explanation".
 "explanation": one short sentence restating the change in plain English.
 Use null for fields that do not apply.`,

@@ -1,6 +1,7 @@
 import type { z } from "zod";
 import type {
   AiSource,
+  DepartureDay,
   ParseResponse,
   PlanResult,
   Recommendation,
@@ -11,6 +12,7 @@ import type {
 } from "@app/shared";
 import { env } from "../config/env.js";
 import { getDataset, matchVenue } from "../data/dataRepository.js";
+import { addDays, nightsFor, weekday } from "../engine/calculator.js";
 import { memoFacts, planFacts } from "../engine/summary.js";
 import { generate } from "./aivanaClient.js";
 import { allowedNumbers, extractJson, numbersInText, scrubDeep } from "./guards.js";
@@ -106,7 +108,14 @@ export async function recommend(plan: PlanResult): Promise<Recommendation> {
 }
 
 export async function interpretWhatIf(message: string, plan: PlanResult): Promise<{ command: WhatIfCommand; source: AiSource }> {
+  const departureDays: DepartureDay[] = ["game_day", "day_before", "two_days_before"];
   const context = {
+    gameDate: plan.request.gameDate,
+    gameWeekday: weekday(plan.request.gameDate),
+    // App-computed so the AI only matches a weekday ("Thursday") to a choice, never counts days.
+    departureWeekdays: Object.fromEntries(
+      departureDays.map((d) => [d, weekday(addDays(plan.request.gameDate, -nightsFor(d)))]),
+    ),
     players: plan.request.players,
     coaches: plan.request.coaches,
     staff: plan.request.staff,
