@@ -6,7 +6,7 @@ export function MemoView({ data, onClose }: { data: MemoResponse; onClose: () =>
   const { memo, option, plan } = data;
   return (
     <div className="print-only-area fixed inset-0 z-50 overflow-y-auto bg-black/40 p-4" onClick={onClose}>
-      <article className="mx-auto max-w-3xl rounded-xl bg-white p-6 shadow-xl sm:p-8" onClick={(e) => e.stopPropagation()}>
+      <article className="mx-auto max-w-3xl rounded-xl bg-white p-4 shadow-xl sm:p-8" onClick={(e) => e.stopPropagation()}>
         <div className="no-print mb-4 flex items-center justify-between">
           <SourceBadge source={memo.source} />
           <div className="flex gap-2">
@@ -30,9 +30,10 @@ export function MemoView({ data, onClose }: { data: MemoResponse; onClose: () =>
             <tbody>
               {memo.itinerary.map((e, i) => (
                 <tr key={i} className="border-t border-stone-100">
-                  <td className="py-1.5 pr-3 whitespace-nowrap text-stone-500">{e.day}</td>
-                  <td className="py-1.5 pr-3 font-mono whitespace-nowrap">{e.time}</td>
-                  <td className="py-1.5">{e.activity}</td>
+                  {/* Day may wrap on phones so the activity column keeps its width. */}
+                  <td className="py-1.5 pr-3 align-top text-xs text-stone-500 sm:text-sm sm:whitespace-nowrap">{e.day}</td>
+                  <td className="py-1.5 pr-3 align-top font-mono whitespace-nowrap">{e.time}</td>
+                  <td className="py-1.5 align-top">{e.activity}</td>
                 </tr>
               ))}
             </tbody>
