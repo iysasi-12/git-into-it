@@ -8,7 +8,8 @@
     "start": "tsx src/index.ts",
     "build": "tsc --noEmit",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "validate-data": "tsx src/data/validateData.ts"
   },
   "dependencies": {
     "@app/shared": "*",
