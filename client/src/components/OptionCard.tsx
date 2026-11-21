@@ -1,7 +1,10 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import type { TravelOption } from "@app/shared";
 import { DEPARTURE_LABELS, money, money2, prettyDate, prettyTime } from "../lib/format";
+import { MathDialog, type MathTarget } from "./MathDialog";
 import { Button, useElapsedSeconds, } from "./ui";
+
+const showsMath = "cursor-pointer underline decoration-stone-300 decoration-dotted underline-offset-4 hover:decoration-brand";
 
 interface Props {
   option: TravelOption;
@@ -21,6 +24,8 @@ export function OptionCard({
   memoLoading,
 }: Props) {
   const [open, setOpen] = useState(false);
+  const [math, setMath] = useState<MathTarget | null>(null);
+  const closeMath = useCallback(() => setMath(null), []);
   const memoSeconds = useElapsedSeconds(memoLoading);
   const delta = o.totalCost - cheapest;
   const costChange = previousOption ? o.totalCost - previousOption.totalCost : 0;
@@ -42,9 +47,13 @@ export function OptionCard({
 
       <div className="mb-3">
         <div className="flex items-center gap-2">
-  <p className="text-3xl font-extrabold text-ink">
+  <button
+    onClick={() => setMath({ kind: "total" })}
+    className={`text-3xl font-extrabold text-ink ${showsMath}`}
+    title="Show the math"
+  >
     {money(o.totalCost)}
-  </p>
+  </button>
 
   {costChange < 0 && (
     <span className="text-sm font-semibold text-green-600">
@@ -59,7 +68,11 @@ export function OptionCard({
   )}
 </div>
         <p className="text-xs text-stone-500">
-          Estimate · {money(o.costPerTraveler)} per traveler{delta > 0 && <span className="text-stone-400"> · +{money(delta)} vs lowest</span>}
+          Estimate ·{" "}
+          <button onClick={() => setMath({ kind: "total" })} className={showsMath} title="Show the math">
+            {money(o.costPerTraveler)} per traveler
+          </button>
+          {delta > 0 && <span className="text-stone-400"> · +{money(delta)} vs lowest</span>}
         </p>
       </div>
 
@@ -111,9 +124,15 @@ export function OptionCard({
     <table className="mb-3 w-full text-xs">
           <tbody>
             {o.lineItems.map((li, i) => (
-              <tr key={i} className="border-t border-stone-100">
+              <tr
+                key={i}
+                onClick={() => setMath({ kind: "item", index: i })}
+                className="cursor-pointer border-t border-stone-100 hover:bg-stone-50"
+              >
                 <td className="py-1 pr-2">
-                  {li.label}
+                  <button className="text-left hover:text-brand" title="Show the math">
+                    {li.label}
+                  </button>
                   <div className="text-stone-400">
                     {li.quantity.toLocaleString()} {li.unit} × {money2(li.unitCost)}
                   </div>
@@ -121,13 +140,14 @@ export function OptionCard({
                 <td className="py-1 text-right font-medium whitespace-nowrap">{money(li.total)}</td>
               </tr>
             ))}
-            <tr className="border-t-2 border-stone-200 font-bold">
+            <tr onClick={() => setMath({ kind: "total" })} className="cursor-pointer border-t-2 border-stone-200 font-bold hover:bg-stone-50">
               <td className="py-1">Total (estimate)</td>
               <td className="py-1 text-right">{money(o.totalCost)}</td>
             </tr>
           </tbody>
         </table>
       )}
+      {math && <MathDialog option={o} target={math} onTarget={setMath} onClose={closeMath} />}
 
       <Button
   variant={recommended ? "primary" : "secondary"}

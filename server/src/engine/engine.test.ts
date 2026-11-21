@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { TripRequest } from "@app/shared";
 import { addDays, gameDayDepartureTime, minBuses, roomsNeeded } from "./calculator.js";
+import { getDataset } from "../data/dataRepository.js";
 import { buildPlan } from "./optionBuilder.js";
 
 // Hand-computed against the sample dataset in server/data.
@@ -189,5 +190,39 @@ describe("D3 extra boundaries", () => {
     expect(B.travelers.total).toBe(1);
     expect(B.buses.count).toBe(1);
     expect(B.rooms.total).toBe(2); // 1 player room + 1 driver
+  });
+});
+describe("show the math (line item basis)", () => {
+  it("Option B hotel: 45 rooms × 1 night × $179, with the rules behind the rooms", () => {
+    const B = buildPlan(base).options[1];
+    const hotel = B.lineItems.find((li) => li.category === "hotel")!;
+    expect(hotel.basis.factors.map((f) => f.value)).toEqual([45, 1, 179]);
+    expect(hotel.basis.factors[2].source).toMatch(/Columbus Riverside Hotel/);
+    expect(hotel.basis.rules).toEqual(
+      expect.arrayContaining([
+        "Players: 65 at 2 per room, rounded up = 33 rooms.",
+        "Coaches: 8 in single rooms = 8 rooms.",
+        "Staff: 4 at 2 per room, rounded up = 2 rooms.",
+        "Bus drivers: 1 room per driver (2 buses) = 2 rooms.",
+      ]),
+    );
+  });
+
+  it("factors multiply to the line total for every venue, option and what-if", () => {
+    const scenarios = [
+      [],
+      [{ action: "adjust_buses" as const, amount: 1, explanation: "" }],
+      [{ action: "set_hotel_budget_cap" as const, amount: 7000, explanation: "" }],
+      [{ action: "set_player_occupancy" as const, amount: 3, explanation: "" }],
+    ];
+    for (const venue of getDataset().venues)
+      for (const departure of ["game_day", "day_before", "two_days_before"] as const)
+        for (const mods of scenarios)
+          for (const o of buildPlan({ ...base, opponentId: venue.id, departure }, mods).options)
+            for (const li of o.lineItems) {
+              const product = li.basis.factors.reduce((p, f) => p * f.value, 1);
+              expect(product, `${venue.id} ${o.id} ${li.label}`).toBeCloseTo(li.total, 2);
+              expect(li.basis.factors.every((f) => f.source.length > 0)).toBe(true);
+            }
   });
 });
