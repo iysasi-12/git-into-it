@@ -32,11 +32,11 @@ client (React+TS+Tailwind v4, Vite) --/api--> server/src/routes/api.ts
 - Engine tests use values computed by hand against the dataset. Changing the data means re-deriving the expected numbers, never just pasting in whatever the code outputs.
 - Small, focused changes. Run `npm run typecheck && npm test` before calling something done.
 
-## Team and ownership (3 people; plan in docs/)
+## Team and ownership (2 people; plan in docs/)
 - **Lead (senior, the person usually driving Claude Code):** finishing the sample dataset, live Aivana and prompt tuning, PR reviews, deploy. Guide: `docs/lead-guide.md`.
-- **Student 1 (first-year, frontend):** `CostChart.tsx`, deltas in `usePlanner.ts`/`OptionCard.tsx`, mobile, skeletons. Guide: `docs/student-1-guide.md`.
+- **Lead also owns the frontend tasks F3–F5** (mobile, skeletons, copy memo) from `docs/student-1-guide.md`. Student 1 left on 2026-11-21 after F1 and F2 were merged. These are normal tasks now, so implement them directly when asked.
 - **Student 2 (first-year, data/tests):** `validateData.ts`, `engine.test.ts` edge cases, `heuristics.ts` phrasings. Guide: `docs/student-2-guide.md`.
-- These are learning tasks. **Do not implement student tasks unless the lead explicitly asks.** When reviewing their work, explain and point the way; don't rewrite it.
+- Student 2's tasks are learning tasks. **Do not implement them unless the lead explicitly asks.** When reviewing their work, explain and point the way; don't rewrite it.
 
 ## Current status / gotchas
 - MVP complete and working in mock mode. Not yet tested against live Aivana.

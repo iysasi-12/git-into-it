@@ -9,7 +9,7 @@ export function Card({ title, right, children, className = "" }: { title?: React
   return (
     <section className={`rounded-xl border border-stone-200 bg-white p-4 shadow-sm ${className}`}>
       {(title || right) && (
-        <div className="mb-3 flex items-center justify-between gap-2">
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
           <h2 className="font-semibold text-ink">{title}</h2>
           {right}
         </div>
