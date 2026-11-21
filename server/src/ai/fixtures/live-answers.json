@@ -1,0 +1,245 @@
+[
+  {
+    "task": "parse",
+    "input": "We're playing Ohio State on October 10th. 65 players, 8 coaches and 4 staff. Leave Friday after class.",
+    "answer": "{\"opponent\":\"Ohio State University\",\"gameDate\":\"2027-10-10\",\"players\":65,\"coaches\":8,\"staff\":4,\"departureConstraint\":{\"day\":\"daybefore\",\"earliestTime\":null,\"note\":\"after class\"},\"specialRequests\":[]}",
+    "expected": "valid",
+    "capturedAt": "2026-11-21T15:34:36.024Z"
+  },
+  {
+    "task": "parse",
+    "input": "Buffalo game 11/14, 50 players 6 coaches 3 staff, leave two days before.",
+    "answer": "{\"opponent\":\"University at Buffalo\",\"gameDate\":\"2027-11-14\",\"players\":50,\"coaches\":6,\"staff\":3,\"departureConstraint\":{\"day\":\"twodaysbefore\",\"earliestTime\":null,\"note\":\"leave two days before\"},\"specialRequests\":[]}",
+    "expected": "valid",
+    "capturedAt": "2026-11-21T15:34:41.179Z"
+  },
+  {
+    "task": "parse",
+    "input": "Going to Kent State Saturday, same day trip, 45 players, 7 coaches, 3 staff. Need vegetarian meals for 4 players.",
+    "answer": "{\"opponent\":\"Kent State University\",\"gameDate\":\"2026-11-21\",\"players\":45,\"coaches\":7,\"staff\":3,\"departureConstraint\":{\"day\":\"gameday\",\"earliestTime\":null,\"note\":\"same day trip\"},\"specialRequests\":[\"vegetarian meals for 4 players\"]}",
+    "expected": "valid",
+    "capturedAt": "2026-11-21T15:34:50.481Z"
+  },
+  {
+    "task": "parse",
+    "input": "Penn State, Oct 24, 70 players 9 coaches 5 staff, leave the day before at 2pm.",
+    "answer": "{\"opponent\":\"Penn State University\",\"gameDate\":\"2027-10-24\",\"players\":70,\"coaches\":9,\"staff\":5,\"departureConstraint\":{\"day\":\"daybefore\",\"earliestTime\":\"14:00\",\"note\":null},\"specialRequests\":[]}",
+    "expected": "valid",
+    "capturedAt": "2026-11-21T15:34:58.297Z"
+  },
+  {
+    "task": "parse",
+    "input": "Michigan next Saturday with the whole roster.",
+    "answer": "{\"opponent\":\"University of Michigan\",\"gameDate\":\"2026-11-28\",\"players\":null,\"coaches\":null,\"staff\":null,\"departureConstraint\":{\"day\":null,\"earliestTime\":null,\"note\":null},\"specialRequests\":[]}",
+    "expected": "valid",
+    "capturedAt": "2026-11-21T15:35:07.756Z"
+  },
+  {
+    "task": "whatif",
+    "input": "Leave 3 players home",
+    "answer": "{\"action\":\"adjustplayers\",\"amount\":-3,\"tier\":null,\"departure\":null,\"explanation\":\"Leave 3 players home.\"}",
+    "expected": "valid",
+    "expectedCommand": {
+      "action": "adjust_players",
+      "amount": -3
+    },
+    "capturedAt": "2026-11-21T15:35:17.297Z"
+  },
+  {
+    "task": "whatif",
+    "input": "Cap hotel budget at $4000",
+    "answer": "{\"action\":\"sethotelbudgetcap\",\"amount\":4000,\"tier\":null,\"departure\":null,\"explanation\":\"Set the hotel budget cap to $4,000.\"}",
+    "expected": "valid",
+    "expectedCommand": {
+      "action": "set_hotel_budget_cap",
+      "amount": 4000
+    },
+    "capturedAt": "2026-11-21T15:35:31.473Z"
+  },
+  {
+    "task": "whatif",
+    "input": "Use one fewer bus",
+    "answer": "{\"action\":\"adjustbuses\",\"amount\":-1,\"tier\":null,\"departure\":null,\"explanation\":\"Use one fewer bus.\"}",
+    "expected": "valid",
+    "expectedCommand": {
+      "action": "adjust_buses",
+      "amount": -1
+    },
+    "capturedAt": "2026-11-21T15:35:41.737Z"
+  },
+  {
+    "task": "whatif",
+    "input": "Upgrade hotel quality",
+    "answer": "{\"action\":\"shifthoteltier\",\"amount\":1,\"tier\":null,\"departure\":null,\"explanation\":\"Upgrade hotel quality.\"}",
+    "expected": "valid",
+    "expectedCommand": {
+      "action": "shift_hotel_tier",
+      "amount": 1
+    },
+    "capturedAt": "2026-11-21T15:35:51.042Z"
+  },
+  {
+    "task": "whatif",
+    "input": "Drop 5 guys from the roster",
+    "answer": "{\"action\":\"adjustplayers\",\"amount\":-5,\"tier\":null,\"departure\":null,\"explanation\":\"Leave 5 players home.\"}",
+    "expected": "valid",
+    "expectedCommand": {
+      "action": "adjust_players",
+      "amount": -5
+    },
+    "capturedAt": "2026-11-21T15:36:00.893Z"
+  },
+  {
+    "task": "whatif",
+    "input": "Lose two assistant coaches",
+    "answer": "{\"action\":\"adjustcoaches\",\"amount\":-2,\"tier\":null,\"departure\":null,\"explanation\":\"Remove 2 assistant coaches.\"}",
+    "expected": "valid",
+    "expectedCommand": {
+      "action": "adjust_coaches",
+      "amount": -2
+    },
+    "capturedAt": "2026-11-21T15:36:12.062Z"
+  },
+  {
+    "task": "whatif",
+    "input": "What if we add a trainer",
+    "answer": "{\"action\":\"adjuststaff\",\"amount\":1,\"tier\":null,\"departure\":null,\"explanation\":\"Add a trainer.\"}",
+    "expected": "valid",
+    "expectedCommand": {
+      "action": "adjust_staff",
+      "amount": 1
+    },
+    "capturedAt": "2026-11-21T15:36:25.469Z"
+  },
+  {
+    "task": "whatif",
+    "input": "We can only spend 6k on hotels",
+    "answer": "{\"action\":\"sethotelbudgetcap\",\"amount\":6000,\"tier\":null,\"departure\":null,\"explanation\":\"Set the hotel budget cap to $6,000.\"}",
+    "expected": "valid",
+    "expectedCommand": {
+      "action": "set_hotel_budget_cap",
+      "amount": 6000
+    },
+    "capturedAt": "2026-11-21T15:36:34.340Z"
+  },
+  {
+    "task": "whatif",
+    "input": "Send 4 players home",
+    "answer": "{\"action\":\"adjustplayers\",\"amount\":-4,\"tier\":null,\"departure\":null,\"explanation\":\"Send 4 players home.\"}",
+    "expected": "valid",
+    "expectedCommand": {
+      "action": "adjust_players",
+      "amount": -4
+    },
+    "capturedAt": "2026-11-21T15:36:44.826Z"
+  },
+  {
+    "task": "whatif",
+    "input": "Take two fewer staff",
+    "answer": "{\"action\":\"adjuststaff\",\"amount\":-2,\"tier\":null,\"departure\":null,\"explanation\":\"Take two fewer staff.\"}",
+    "expected": "valid",
+    "expectedCommand": {
+      "action": "adjust_staff",
+      "amount": -2
+    },
+    "capturedAt": "2026-11-21T15:36:53.041Z"
+  },
+  {
+    "task": "whatif",
+    "input": "Switch to a cheaper hotel",
+    "answer": "{\"action\":\"shifthoteltier\",\"amount\":-1,\"tier\":null,\"departure\":null,\"explanation\":\"Switch to a cheaper hotel.\"}",
+    "expected": "valid",
+    "expectedCommand": {
+      "action": "shift_hotel_tier",
+      "amount": -1
+    },
+    "capturedAt": "2026-11-21T15:37:01.575Z"
+  },
+  {
+    "task": "whatif",
+    "input": "Let's leave Thursday instead",
+    "answer": "{\"action\":\"unsupported\",\"amount\":null,\"tier\":null,\"departure\":null,\"explanation\":\"Changing the requested departure to Thursday is unsupported because the planner only accepts game day, the day before, or two days before.\"}",
+    "expected": "known-bad",
+    "expectedCommand": {
+      "action": "set_departure",
+      "departure": "two_days_before"
+    },
+    "capturedAt": "2026-11-21T15:37:27.491Z"
+  },
+  {
+    "task": "whatif",
+    "input": "Put 3 players per room",
+    "answer": "{\"action\":\"setplayeroccupancy\",\"amount\":3,\"tier\":null,\"departure\":null,\"explanation\":\"Set player rooms to 3 players per room.\"}",
+    "expected": "valid",
+    "expectedCommand": {
+      "action": "set_player_occupancy",
+      "amount": 3
+    },
+    "capturedAt": "2026-11-21T15:37:35.192Z"
+  },
+  {
+    "task": "whatif",
+    "input": "Put three players per room",
+    "answer": "{\"action\":\"setplayeroccupancy\",\"amount\":3,\"tier\":null,\"departure\":null,\"explanation\":\"The plan will be updated to put three players per room.\"}",
+    "expected": "valid",
+    "expectedCommand": {
+      "action": "set_player_occupancy",
+      "amount": 3
+    },
+    "capturedAt": "2026-11-21T15:37:40.517Z"
+  },
+  {
+    "task": "whatif",
+    "input": "Send 2 more coaches",
+    "answer": "{\"action\":\"adjustcoaches\",\"amount\":2,\"tier\":null,\"departure\":null,\"explanation\":\"Send 2 more coaches.\"}",
+    "expected": "valid",
+    "expectedCommand": {
+      "action": "adjust_coaches",
+      "amount": 2
+    },
+    "capturedAt": "2026-11-21T15:37:49.368Z"
+  },
+  {
+    "task": "whatif",
+    "input": "Add one more bus",
+    "answer": "{\"action\":\"adjustbuses\",\"amount\":1,\"tier\":null,\"departure\":null,\"explanation\":\"Add one more bus.\"}",
+    "expected": "valid",
+    "expectedCommand": {
+      "action": "adjust_buses",
+      "amount": 1
+    },
+    "capturedAt": "2026-11-21T15:38:12.550Z"
+  },
+  {
+    "task": "whatif",
+    "input": "Put only 3 players per room",
+    "answer": "{\"action\":\"setplayeroccupancy\",\"amount\":3,\"tier\":null,\"departure\":null,\"explanation\":\"Set player room occupancy to 3 players per room.\"}",
+    "expected": "valid",
+    "expectedCommand": {
+      "action": "set_player_occupancy",
+      "amount": 3
+    },
+    "capturedAt": "2026-11-21T15:38:40.189Z"
+  },
+  {
+    "task": "recommend",
+    "input": "Ohio State base plan",
+    "answer": "{\"recommendedOptionId\":\"B\",\"reasoning\":\"Option B is the best balance because its total estimate is $21,395, which is $14,721 more than Option A and $9,079 less than Option C. It also matches the requested departure the day before, while Option A has a warning that it departs on game day instead of the requested departure. Option C adds comfort, but its total estimate is $30,474, or 42% higher than Option B, so Option B is the stronger middle ground for cost, rest, and logistics risk.\",\"tradeoffs\":[{\"optionId\":\"A\",\"pros\":[\"Lowest total estimate at $6,674\"],\"cons\":[\"Departs on game day instead of the requested departure the day before\",\"Less support for rest and recovery than the overnight options\"]},{\"optionId\":\"B\",\"pros\":[\"Requested departure the day before\",\"Lower total estimate than Option C at $21,395\",\"Overnight plan with no listed warnings\"],\"cons\":[\"Higher total estimate than Option A by $14,721\",\"Less comfort than Option C\"]},{\"optionId\":\"C\",\"pros\":[\"Requested departure the day before\",\"Strongest comfort setup of the three\"],\"cons\":[\"Highest total estimate at $30,474\",\"Costs $9,079 more than Option B\"]}]}",
+    "expected": "valid",
+    "capturedAt": "2026-11-21T15:38:59.938Z"
+  },
+  {
+    "task": "recommend",
+    "input": "Ohio State base plan (2nd run)",
+    "answer": "{\"recommendedOptionId\":\"B\",\"reasoning\":\"Option B is the best balance of cost, rest, and logistics risk. Its total estimate is $21,395, which is $14,721 more than Option A, but Option A carries a warning because it departs on game day instead of the requested departure the day before. Option C improves comfort, but its total estimate is $30,474, which is $9,079 more than Option B and 42% higher, making Option B the stronger middle ground.\",\"tradeoffs\":[{\"optionId\":\"A\",\"pros\":[\"Lowest total estimate at $6,674\",\"Lowest estimate per traveler at $86.68\"],\"cons\":[\"Departs on game day instead of the requested departure the day before\",\"No overnight stay, which reduces rest and recovery\"]},{\"optionId\":\"B\",\"pros\":[\"Matches the requested departure the day before\",\"Includes an overnight stay for better rest and recovery\",\"Lower total estimate than Option C at $21,395\"],\"cons\":[\"Higher total estimate than Option A by $14,721\",\"Less comfort than Option C\"]},{\"optionId\":\"C\",\"pros\":[\"Most comfort-focused option\",\"Overnight stay supports rest and recovery\",\"Closer hotel and upgraded coach amenities\"],\"cons\":[\"Highest total estimate at $30,474\",\"Costs $9,079 more than Option B\",\"May add comfort beyond what is needed for this trip\"]}]}",
+    "expected": "valid",
+    "capturedAt": "2026-11-21T15:39:20.417Z"
+  },
+  {
+    "task": "memo",
+    "input": "Ohio State, Option B",
+    "answer": "{\"title\":\"Ohio State University travel memo for Saturday, 2027-10-09\",\"summary\":\"This memo covers travel for 77 travelers for the away game against Ohio State University on Saturday, 2027-10-09. The group will travel by bus on Option B, Balanced, departing the day before and staying at Columbus Riverside Hotel. The team will arrive on Friday, stay overnight, and depart for Ohio Stadium on game day. The total estimate for this trip is $21,395.\",\"itinerary\":[{\"day\":\"Friday 2027-10-08\",\"time\":\"13:30\",\"activity\":\"Team reports to the bus loading area.\"},{\"day\":\"Friday 2027-10-08\",\"time\":\"14:00\",\"activity\":\"Buses depart for Columbus, OH.\"},{\"day\":\"Friday 2027-10-08\",\"time\":\"16:00\",\"activity\":\"Arrive and check in at Columbus Riverside Hotel.\"},{\"day\":\"Friday 2027-10-08\",\"time\":\"18:30\",\"activity\":\"Team dinner.\"},{\"day\":\"Saturday 2027-10-09\",\"time\":\"08:00\",\"activity\":\"Team breakfast.\"},{\"day\":\"Saturday 2027-10-09\",\"time\":\"11:30\",\"activity\":\"Pre-game meal.\"},{\"day\":\"Saturday 2027-10-09\",\"time\":\"12:30\",\"activity\":\"Depart the hotel for Ohio Stadium.\"},{\"day\":\"Saturday 2027-10-09\",\"time\":\"15:30\",\"activity\":\"Kickoff at Ohio Stadium.\"},{\"day\":\"Saturday 2027-10-09\",\"time\":\"20:00\",\"activity\":\"Buses depart for home, with the post-game meal on board.\"},{\"day\":\"Saturday 2027-10-09\",\"time\":\"22:00\",\"activity\":\"Estimated arrival back on campus.\"}],\"departureReminders\":[\"Please report to the bus loading area by 13:30 on Friday for check-in and departure preparation.\",\"Be ready for the 14:00 Friday departure with personal bags and team equipment organized for loading.\",\"Bring required identification and any travel essentials before reporting at 13:30.\",\"Check the weather before the 14:00 Friday departure and pack accordingly for travel and game day.\",\"Plan ahead for dinner at 18:30 on Friday, breakfast at 08:00 on Saturday, and the pre-game meal at 11:30.\",\"Any last-minute needs should be communicated before the 14:00 departure.\"],\"mealSchedule\":[{\"day\":\"Friday 2027-10-08\",\"meal\":\"dinner\",\"note\":\"Team dinner is scheduled after hotel check-in.\"},{\"day\":\"Saturday 2027-10-09\",\"meal\":\"breakfast\",\"note\":\"Breakfast is scheduled before game-day preparations.\"},{\"day\":\"Saturday 2027-10-09\",\"meal\":\"lunch\",\"note\":\"The pre-game meal is scheduled before departure to the stadium.\"},{\"day\":\"Saturday 2027-10-09\",\"meal\":\"dinner\",\"note\":\"The post-game meal will be provided during the return trip.\"}]}",
+    "expected": "valid",
+    "capturedAt": "2026-11-21T15:39:41.414Z"
+  }
+]
