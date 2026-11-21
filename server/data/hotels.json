@@ -32,6 +32,34 @@
 
     { "id": "psu-econ-1", "venueId": "penn-state", "name": "State College Value Inn", "tier": "economy", "nightlyRate": 149, "roomsAvailable": 45, "distanceToStadiumMiles": 5.5 },
     { "id": "psu-mid-1", "venueId": "penn-state", "name": "State College Conference Hotel", "tier": "midscale", "nightlyRate": 209, "roomsAvailable": 55, "distanceToStadiumMiles": 2.5 },
-    { "id": "psu-up-1", "venueId": "penn-state", "name": "State College Campus Grand Hotel", "tier": "upscale", "nightlyRate": 299, "roomsAvailable": 60, "distanceToStadiumMiles": 0.8 }
+    { "id": "psu-up-1", "venueId": "penn-state", "name": "State College Campus Grand Hotel", "tier": "upscale", "nightlyRate": 299, "roomsAvailable": 60, "distanceToStadiumMiles": 0.8 },
+
+    { "id": "akron-econ-1", "venueId": "akron", "name": "Akron Value Inn", "tier": "economy", "nightlyRate": 109, "roomsAvailable": 55, "distanceToStadiumMiles": 4.0 },
+    { "id": "akron-mid-1", "venueId": "akron", "name": "Akron Conference Hotel", "tier": "midscale", "nightlyRate": 155, "roomsAvailable": 55, "distanceToStadiumMiles": 1.8 },
+    { "id": "akron-up-1", "venueId": "akron", "name": "Akron Campus Grand Hotel", "tier": "upscale", "nightlyRate": 219, "roomsAvailable": 60, "distanceToStadiumMiles": 0.9 },
+
+    { "id": "cmu-econ-1", "venueId": "central-michigan", "name": "Mount Pleasant Value Inn", "tier": "economy", "nightlyRate": 105, "roomsAvailable": 55, "distanceToStadiumMiles": 3.5 },
+    { "id": "cmu-mid-1", "venueId": "central-michigan", "name": "Mount Pleasant Conference Hotel", "tier": "midscale", "nightlyRate": 149, "roomsAvailable": 50, "distanceToStadiumMiles": 2.1 },
+    { "id": "cmu-up-1", "venueId": "central-michigan", "name": "Mount Pleasant Grand Hotel", "tier": "upscale", "nightlyRate": 215, "roomsAvailable": 60, "distanceToStadiumMiles": 4.5 },
+
+    { "id": "emu-econ-1", "venueId": "eastern-michigan", "name": "Ypsilanti Value Inn", "tier": "economy", "nightlyRate": 115, "roomsAvailable": 50, "distanceToStadiumMiles": 3.0 },
+    { "id": "emu-mid-1", "venueId": "eastern-michigan", "name": "Ypsilanti Conference Hotel", "tier": "midscale", "nightlyRate": 165, "roomsAvailable": 55, "distanceToStadiumMiles": 1.6 },
+    { "id": "emu-up-1", "venueId": "eastern-michigan", "name": "Ann Arbor Southside Grand Hotel", "tier": "upscale", "nightlyRate": 249, "roomsAvailable": 60, "distanceToStadiumMiles": 6.0 },
+
+    { "id": "niu-econ-1", "venueId": "northern-illinois", "name": "DeKalb Value Inn", "tier": "economy", "nightlyRate": 109, "roomsAvailable": 55, "distanceToStadiumMiles": 3.8 },
+    { "id": "niu-mid-1", "venueId": "northern-illinois", "name": "DeKalb Conference Hotel", "tier": "midscale", "nightlyRate": 155, "roomsAvailable": 50, "distanceToStadiumMiles": 2.0 },
+    { "id": "niu-up-1", "venueId": "northern-illinois", "name": "DeKalb Campus Grand Hotel", "tier": "upscale", "nightlyRate": 225, "roomsAvailable": 60, "distanceToStadiumMiles": 1.0 },
+
+    { "id": "ohio-econ-1", "venueId": "ohio", "name": "Athens Value Inn", "tier": "economy", "nightlyRate": 105, "roomsAvailable": 50, "distanceToStadiumMiles": 3.2 },
+    { "id": "ohio-mid-1", "venueId": "ohio", "name": "Athens Conference Hotel", "tier": "midscale", "nightlyRate": 149, "roomsAvailable": 50, "distanceToStadiumMiles": 1.5 },
+    { "id": "ohio-up-1", "venueId": "ohio", "name": "Athens Campus Grand Hotel", "tier": "upscale", "nightlyRate": 215, "roomsAvailable": 55, "distanceToStadiumMiles": 0.7 },
+
+    { "id": "toledo-econ-1", "venueId": "toledo", "name": "Toledo Value Inn", "tier": "economy", "nightlyRate": 109, "roomsAvailable": 60, "distanceToStadiumMiles": 4.5 },
+    { "id": "toledo-mid-1", "venueId": "toledo", "name": "Toledo Riverside Hotel", "tier": "midscale", "nightlyRate": 159, "roomsAvailable": 55, "distanceToStadiumMiles": 3.0 },
+    { "id": "toledo-up-1", "venueId": "toledo", "name": "Toledo Downtown Grand Hotel", "tier": "upscale", "nightlyRate": 229, "roomsAvailable": 65, "distanceToStadiumMiles": 3.5 },
+
+    { "id": "umass-econ-1", "venueId": "umass", "name": "Hadley Value Inn", "tier": "economy", "nightlyRate": 135, "roomsAvailable": 50, "distanceToStadiumMiles": 3.5 },
+    { "id": "umass-mid-1", "venueId": "umass", "name": "Hadley Conference Hotel", "tier": "midscale", "nightlyRate": 185, "roomsAvailable": 55, "distanceToStadiumMiles": 2.5 },
+    { "id": "umass-up-1", "venueId": "umass", "name": "Northampton Grand Hotel", "tier": "upscale", "nightlyRate": 265, "roomsAvailable": 60, "distanceToStadiumMiles": 8.0 }
   ]
 }
