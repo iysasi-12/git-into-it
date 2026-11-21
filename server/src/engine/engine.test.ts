@@ -89,3 +89,71 @@ describe("buildPlan", () => {
     expect(p.options[0].nights).toBe(1);
   });
 });
+
+describe("D3 edge cases", () => {
+  it("56 travelers fit on one standard bus (Option B)", () => {
+    const p = buildPlan({ ...base, players: 50, coaches: 4, staff: 2 });
+    expect(p.options[1].travelers.total).toBe(56);
+    expect(p.options[1].buses.count).toBe(1);
+  });
+
+  it("56 travelers need 2 premium buses (Option C seats 50)", () => {
+    const p = buildPlan({ ...base, players: 50, coaches: 4, staff: 2 });
+    expect(p.options[2].buses.count).toBe(2);
+  });
+
+  it("57 travelers need 2 standard buses (Option B)", () => {
+    const p = buildPlan({ ...base, players: 51, coaches: 4, staff: 2 });
+    expect(p.options[1].travelers.total).toBe(57);
+    expect(p.options[1].buses.count).toBe(2);
+  });
+
+  it("zero staff: no staff rooms, nothing crashes", () => {
+    const p = buildPlan({ ...base, staff: 0 });
+    const B = p.options[1];
+    expect(B.travelers.total).toBe(73);
+    expect(B.rooms.staff).toBe(0);
+    expect(B.rooms.total).toBe(43); // 33 players + 8 coaches + 0 staff + 2 drivers
+  });
+
+  it("two nights before: 2 nights and the right meal total", () => {
+    const p = buildPlan({ ...base, departure: "two_days_before" });
+    const B = p.options[1];
+    expect(B.nights).toBe(2);
+    const meals = B.lineItems
+      .filter((li) => li.category === "meals")
+      .reduce((s, li) => s + li.total, 0);
+    expect(meals).toBe(12320); // verify by hand, see note below
+  });
+
+  it("budget cap nothing fits under warns about over budget", () => {
+    const p = buildPlan(base, [{ action: "set_hotel_budget_cap", amount: 100, explanation: "" }]);
+    expect(p.options[1].warnings.join(" ")).toMatch(/over budget/);
+  });
+});
+
+describe("D3 extra boundaries", () => {
+  it("zero coaches: no coach rooms, nothing crashes", () => {
+    const p = buildPlan({ ...base, coaches: 0 });
+    const B = p.options[1];
+    expect(B.travelers.total).toBe(69);
+    expect(B.buses.count).toBe(2);
+    expect(B.rooms.total).toBe(37); // 33 players + 0 coaches + 2 staff + 2 drivers
+  });
+
+  it("zero players: still builds a plan", () => {
+    const p = buildPlan({ ...base, players: 0 });
+    const B = p.options[1];
+    expect(B.travelers.total).toBe(12);
+    expect(B.buses.count).toBe(1);
+    expect(B.rooms.total).toBe(11); // 0 players + 8 coaches + 2 staff + 1 driver
+  });
+
+  it("one traveler: 1 bus, 2 rooms", () => {
+    const p = buildPlan({ ...base, players: 1, coaches: 0, staff: 0 });
+    const B = p.options[1];
+    expect(B.travelers.total).toBe(1);
+    expect(B.buses.count).toBe(1);
+    expect(B.rooms.total).toBe(2); // 1 player room + 1 driver
+  });
+});
