@@ -1,5 +1,5 @@
 {
-  "_meta": "PLACEHOLDER SAMPLE DATA — replace with the official hackathon dataset. All costs are estimates.",
+  "_meta": "Team-built sample dataset (no official dataset was provided). All rates are illustrative estimates.",
   "busTypes": [
     { "id": "standard-coach", "name": "Standard Motorcoach", "capacity": 56, "dailyRate": 1100, "perMileRate": 3.25, "amenities": ["Restroom", "Reclining seats"] },
     { "id": "premium-coach", "name": "Premium Team Coach", "capacity": 50, "dailyRate": 1450, "perMileRate": 3.75, "amenities": ["Restroom", "Extra legroom", "Wi-Fi", "Power outlets"] }

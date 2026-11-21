@@ -1,5 +1,5 @@
 {
-  "_meta": "PLACEHOLDER SAMPLE DATA — replace with the official hackathon dataset. Distances are one-way from Bowling Green, OH.",
+  "_meta": "Team-built sample dataset (no official dataset was provided). Distances are approximate one-way road miles from Bowling Green, OH.",
   "origin": { "name": "Bowling Green State University", "city": "Bowling Green", "state": "OH" },
   "venues": [
     { "id": "ohio-state", "school": "Ohio State University", "mascot": "Buckeyes", "stadium": "Ohio Stadium", "city": "Columbus", "state": "OH", "distanceMiles": 125, "driveHours": 2.1, "aliases": ["ohio state", "osu", "buckeyes", "columbus"] },

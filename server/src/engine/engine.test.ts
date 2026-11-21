@@ -3,7 +3,7 @@ import type { TripRequest } from "@app/shared";
 import { addDays, gameDayDepartureTime, minBuses, roomsNeeded } from "./calculator.js";
 import { buildPlan } from "./optionBuilder.js";
 
-// Hand-computed against the placeholder dataset in server/data.
+// Hand-computed against the sample dataset in server/data.
 const base: TripRequest = {
   opponentId: "ohio-state",
   gameDate: "2026-10-10",
