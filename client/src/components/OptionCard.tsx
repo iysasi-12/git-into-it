@@ -12,21 +12,10 @@ interface Props {
   memoLoading: boolean;
 }
 
-export function OptionCard({
-  option: o,
-  previousOption,
-  recommended,
-  cheapest,
-  onMemo,
-  memoLoading,
-}: Props) {
+export function OptionCard({ option: o, previousOption, recommended, cheapest, onMemo, memoLoading }: Props) {
   const [open, setOpen] = useState(false);
   const delta = o.totalCost - cheapest;
-  const costChange =
-  previousOption
-    ? o.totalCost - previousOption.totalCost
-    : 0;
-
+  const costChange = previousOption ? o.totalCost - previousOption.totalCost : 0;
 
   return (
     <article
@@ -44,22 +33,10 @@ export function OptionCard({
 
       <div className="mb-3">
         <div className="flex items-center gap-2">
-  <p className="text-3xl font-extrabold text-ink">
-    {money(o.totalCost)}
-  </p>
-
-  {costChange < 0 && (
-    <span className="text-sm font-semibold text-green-600">
-      ▼ {money(Math.abs(costChange))}
-    </span>
-  )}
-
-  {costChange > 0 && (
-    <span className="text-sm font-semibold text-red-600">
-      ▲ {money(costChange)}
-    </span>
-  )}
-</div>
+          <p className="text-3xl font-extrabold text-ink">{money(o.totalCost)}</p>
+          {costChange < 0 && <span className="text-sm font-semibold text-green-600">▼ {money(Math.abs(costChange))}</span>}
+          {costChange > 0 && <span className="text-sm font-semibold text-red-600">▲ {money(costChange)}</span>}
+        </div>
         <p className="text-xs text-stone-500">
           Estimate · {money(o.costPerTraveler)} per traveler{delta > 0 && <span className="text-stone-400"> · +{money(delta)} vs lowest</span>}
         </p>
