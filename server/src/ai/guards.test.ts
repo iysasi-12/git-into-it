@@ -18,6 +18,12 @@ describe("heuristicParse counts", () => {
   it("leaves a count null when it isn't mentioned", () => {
     expect(parse("Michigan Dec 12, 50 players, 3 staff.").coaches).toBeNull();
   });
+
+  // Unclear wording stays null on purpose: the form asks again instead of guessing 0.
+  it("leaves 'no extra staff' and 'staff: none' null", () => {
+    expect(parse("Michigan Dec 12, 50 players, 6 coaches, no extra staff.").staff).toBeNull();
+    expect(parse("Michigan Dec 12, 50 players, 6 coaches, staff: none.").staff).toBeNull();
+  });
 });
 
 describe("enum spelling repair", () => {
@@ -119,22 +125,5 @@ describe("numbersInText", () => {
     ["Use 2 rooms for 3 players", [2, 3]],
   ])("extracts numbers from %s", (message, expected) => {
     expect(numbersInText(message)).toEqual(expected);
-  });
-});
-
-describe("heuristicParse counts", () => {
-  const parse = (text: string) => heuristicParse(text, "2026-11-21", "University of Michigan");
-
-  it("reads 'no staff' as 0, not missing", () => {
-    expect(parse("Michigan Dec 12, 50 players, 6 coaches, no staff.")).toMatchObject({ players: 50, coaches: 6, staff: 0 });
-  });
-
-  it("reads 'zero coaches' and 'without staff' as 0", () => {
-    expect(parse("Michigan Dec 12, 50 players, zero coaches, 3 staff.").coaches).toBe(0);
-    expect(parse("Michigan Dec 12, 50 players, 6 coaches, without staff.").staff).toBe(0);
-  });
-
-  it("leaves a count null when it isn't mentioned", () => {
-    expect(parse("Michigan Dec 12, 50 players, 3 staff.").coaches).toBeNull();
   });
 });
