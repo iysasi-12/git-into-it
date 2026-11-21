@@ -97,10 +97,11 @@ Venues can have an optional `timeZone` (`"ET"` or `"CT"`, default ET). Only Nort
 
 ## Demo script
 
-1. *Describe it* → "Use sample" → Extract details → Build travel options
-2. Point out the ★ recommendation and the tradeoffs, then click a cost to show the math
-3. What-ifs: "Leave 3 players home" → "Do the same for coaches" (multi-turn) → "Use one fewer bus" (rejected: not enough seats) → "Upgrade hotel quality" → "Cap hotel budget at $7000"
-4. Undo a chip, then Generate travel memo → Copy as text or Print
+1. *Trip details* → **From the schedule** → "Sat 10/09/2027 · at Ohio State": opponent, date and kickoff fill in from the dataset
+2. *Describe it* → "Use sample" → Extract details: Aivana reads the same trip in plain English and fills in travelers, departure and the vegetarian request → Build travel options
+3. Point out the ★ recommendation and the tradeoffs, then click a cost to show the math
+4. What-ifs: "Leave 3 players home" → "Do the same for coaches" (multi-turn) → "Use one fewer bus" (rejected: not enough seats) → "Upgrade hotel quality" → "Cap hotel budget at $7000"
+5. Undo a chip, then Generate travel memo → Copy as text or Print
 
 ## Known limits
 
