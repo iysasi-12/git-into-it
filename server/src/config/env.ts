@@ -18,6 +18,8 @@ const EnvSchema = z.object({
     .optional()
     .transform((v) => v === "true" || v === "1"),
   AIVANA_TIMEOUT_MS: z.coerce.number().int().positive().default(20000),
+  // Recommend and memo take 15-35 s live; recommend runs in the background, so it can wait longer.
+  AIVANA_SLOW_TIMEOUT_MS: z.coerce.number().int().positive().default(45000),
   PORT: z.coerce.number().int().positive().default(3001),
 });
 
@@ -39,5 +41,6 @@ export const env = {
   aivanaBaseUrl: raw.AIVANA_BASE_URL.replace(/\/$/, ""),
   aivanaMock: mock,
   aivanaTimeoutMs: raw.AIVANA_TIMEOUT_MS,
+  aivanaSlowTimeoutMs: raw.AIVANA_SLOW_TIMEOUT_MS,
   port: raw.PORT,
 };

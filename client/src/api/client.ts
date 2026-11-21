@@ -6,6 +6,8 @@ import type {
   ParseResponse,
   PlanRequestBody,
   PlanResponse,
+  RecommendRequestBody,
+  RecommendResponse,
   WhatIfRequestBody,
   WhatIfResponse,
 } from "@app/shared";
@@ -34,6 +36,7 @@ export const api = {
   opponents: () => request<OpponentSummary[]>("/opponents"),
   parse: (text: string) => post<ParseResponse>("/parse", { text }),
   plan: (body: PlanRequestBody) => post<PlanResponse>("/plan", body),
+  recommend: (body: RecommendRequestBody) => post<RecommendResponse>("/recommend", body),
   whatIf: (body: WhatIfRequestBody) => post<WhatIfResponse>("/whatif", body),
   memo: (body: MemoRequestBody) => post<MemoResponse>("/memo", body),
 };

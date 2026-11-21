@@ -239,8 +239,14 @@ export interface PlanRequestBody {
   modifiers?: WhatIfCommand[];
 }
 
+/** Options come back immediately (engine only); the AI recommendation is fetched separately via /recommend. */
 export interface PlanResponse {
   plan: PlanResult;
+}
+
+export type RecommendRequestBody = PlanRequestBody;
+
+export interface RecommendResponse {
   recommendation: Recommendation;
 }
 

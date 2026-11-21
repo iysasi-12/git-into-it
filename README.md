@@ -37,7 +37,8 @@ client (React)  ──/api──▶  routes ──▶ engine/  (pure calculation
 |---|---|
 | `GET /api/opponents` | venues for the form |
 | `POST /api/parse` | free text → structured request (Aivana) |
-| `POST /api/plan` | request + modifiers → 3 options + recommendation |
+| `POST /api/plan` | request + modifiers → 3 options (instant, no AI) |
+| `POST /api/recommend` | request + modifiers → recommendation (Aivana; slow live, so the client loads it after the options) |
 | `POST /api/whatif` | chat → command (Aivana) → recalculated plan |
 | `POST /api/memo` | chosen option → memo (Aivana) |
 
