@@ -1,15 +1,48 @@
+import { useEffect, useRef, useState } from "react";
 import type { MemoResponse } from "@app/shared";
 import { money, money2 } from "../lib/format";
 import { Button, SourceBadge } from "./ui";
 
 export function MemoView({ data, onClose }: { data: MemoResponse; onClose: () => void }) {
   const { memo, option, plan } = data;
+  const [copyState, setCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const resetTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  // Stop a pending label reset if the memo closes within 2 s.
+  useEffect(() => () => clearTimeout(resetTimer.current), []);
+
+  async function handleCopy() {
+    // Build the text line by line so code indentation can't leak into the pasted text.
+    const lines = [
+      memo.title,
+      "",
+      memo.summary,
+      "",
+      "ITINERARY",
+      ...memo.itinerary.map((e) => `${e.day} ${e.time} - ${e.activity}`),
+      "",
+      "DEPARTURE REMINDERS",
+      ...memo.departureReminders.map((r) => `- ${r}`),
+    ];
+    try {
+      // Rejects if the browser blocks clipboard access; navigator.clipboard is undefined on plain http.
+      await navigator.clipboard.writeText(lines.join("\n"));
+      setCopyState("copied");
+    } catch {
+      setCopyState("failed");
+    }
+    clearTimeout(resetTimer.current);
+    resetTimer.current = setTimeout(() => setCopyState("idle"), 2000);
+  }
+
   return (
     <div className="print-only-area fixed inset-0 z-50 overflow-y-auto bg-black/40 p-4" onClick={onClose}>
       <article className="mx-auto max-w-3xl rounded-xl bg-white p-4 shadow-xl sm:p-8" onClick={(e) => e.stopPropagation()}>
-        <div className="no-print mb-4 flex items-center justify-between">
+        <div className="no-print mb-4 flex flex-wrap items-center justify-between gap-2">
           <SourceBadge source={memo.source} />
           <div className="flex gap-2">
+            <Button variant="secondary" onClick={handleCopy}>
+              {copyState === "copied" ? "Copied!" : copyState === "failed" ? "Copy failed" : "Copy as text"}
+            </Button>
             <Button variant="secondary" onClick={() => window.print()}>
               Print
             </Button>
