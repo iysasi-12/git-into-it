@@ -88,6 +88,38 @@ describe("buildPlan", () => {
     const p = buildPlan({ ...base, opponentId: "penn-state" });
     expect(p.options[0].nights).toBe(1);
   });
+
+    it("what-if: change player room occupancy", () => {
+    const p = buildPlan(base, [
+      {
+        action: "set_player_occupancy",
+        amount: 3,
+        explanation: "Put 3 players per room",
+      },
+    ]);
+
+    const B = p.options[1];
+
+    expect(B.rooms.players).toBe(22);
+    expect(B.rooms.coaches).toBe(8);
+    expect(B.rooms.staff).toBe(2);
+    expect(B.rooms.total).toBe(34);
+    expect(B.totalCost).toBeLessThan(21395);
+  });
+
+  it("what-if: reject invalid player occupancy", () => {
+    const p = buildPlan(base, [
+      {
+        action: "set_player_occupancy",
+        amount: 0,
+        explanation: "Put zero players per room",
+      },
+    ]);
+
+    expect(p.options[1].rooms.players).toBe(33);
+    expect(p.notes.join(" ")).toMatch(/positive whole number/);
+  });
+
 });
 
 describe("D3 edge cases", () => {

@@ -73,8 +73,20 @@ export function heuristicParse(text: string, today: string, opponentName: string
 
 export function heuristicWhatIf(message: string): WhatIfCommand {
   const t = message.toLowerCase();
-    const group = (noun: string) => {
-    const adj = "(?:(?:more|extra|assistant)\\s+)*";
+  const occupancy = t.match(
+  /\b(?:put|fit|room)\s+(?:(?:only|just)\s+)?(\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s+players?\b/
+);
+
+if (occupancy && /per room|in each room|to a room/.test(t)) {
+  const amount = num(occupancy[1]);
+  return {
+    action: "set_player_occupancy",
+    amount,
+    explanation: `Set player room occupancy to ${amount} per room.`,
+  };
+}
+  const group = (noun: string) => {
+  const adj = "(?:(?:more|extra|assistant)\\s+)*";
     const minus = t.match(new RegExp(`(?:leave|drop|cut|remove|minus|fewer|less|without|lose)\\s+${NUM_WORD}\\s+${adj}${noun}`));
     if (minus) return -num(minus[1]);
     // "send" only means remove when followed by home/back: "send 4 players home"
@@ -116,7 +128,10 @@ export function heuristicWhatIf(message: string): WhatIfCommand {
   if (/two days before|thursday/.test(t)) return { action: "set_departure", departure: "two_days_before", explanation: "Depart two days before the game." };
   if (/day before|night before|friday/.test(t)) return { action: "set_departure", departure: "day_before", explanation: "Depart the day before the game." };
   if (/game day|same day|morning of/.test(t)) return { action: "set_departure", departure: "game_day", explanation: "Travel on game day." };
-  return { action: "unsupported", explanation: "I couldn't map that to a supported change (players, coaches, staff, buses, hotel cap/tier, departure)." };
+  return {
+  action: "unsupported",
+  explanation: "I couldn't map that to a supported change (players, coaches, staff, buses, player room occupancy, hotel cap/tier, departure).",
+  };
 }
 
 const fmt = (n: number) => `$${n.toLocaleString("en-US", { maximumFractionDigits: 0 })}`;

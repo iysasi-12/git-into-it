@@ -70,6 +70,10 @@ export function buildOption(profile: Profile, scenario: Scenario, venue: Venue, 
   const req = scenario.request;
   const counts = { players: req.players, coaches: req.coaches, staff: req.staff };
   const travelers = totalTravelers(counts);
+  const occupancy = {
+  ...profile.occupancy,
+  players: scenario.playerOccupancyOverride ?? profile.occupancy.players,
+  };
   const gameTime = req.gameTime || ds.policy.defaultGameTime;
 
   // --- Departure / nights -------------------------------------------------
@@ -97,8 +101,7 @@ export function buildOption(profile: Profile, scenario: Scenario, venue: Venue, 
 
   // --- Rooms & hotel -----------------------------------------------------
   const driverRooms = nights > 0 && ds.policy.driverRoomsRequired ? busCount : 0;
-  const rooms = nights > 0 ? roomsNeeded(counts, profile.occupancy, driverRooms) : { players: 0, coaches: 0, staff: 0, drivers: 0, total: 0 };
-  let hotel = null as TravelOption["hotel"];
+  const rooms = nights > 0 ? roomsNeeded(counts, occupancy, driverRooms) : { players: 0, coaches: 0, staff: 0, drivers: 0, total: 0 };  let hotel = null as TravelOption["hotel"];
   let hotelTotal = 0;
 
   if (nights > 0) {
