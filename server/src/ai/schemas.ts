@@ -1,11 +1,18 @@
 import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
+import { canonicalEnum } from "./guards.js";
 
 // Structured-output contracts for every Aivana task. Aivana has no native JSON
 // mode, so the JSON Schema is embedded in the prompt and zod validates the reply.
 
 const OptionIdZ = z.enum(["A", "B", "C"]);
 const HHMM = z.string().regex(/^\d{2}:\d{2}$/);
+
+/** z.enum that first repairs near-miss spellings ("daybefore" -> "day_before"). The JSON Schema shown to the model is unchanged. */
+function looseEnum<const T extends readonly [string, ...string[]]>(values: T) {
+  return z.preprocess((v) => canonicalEnum(v, values), z.enum(values as unknown as [T[number], ...T[number][]]));
+}
+const DEPARTURE_DAYS = ["game_day", "day_before", "two_days_before"] as const;
 
 export const ParsedRequestSchema = z.object({
   opponent: z.string().nullable(),
@@ -14,7 +21,7 @@ export const ParsedRequestSchema = z.object({
   coaches: z.number().int().nonnegative().nullable(),
   staff: z.number().int().nonnegative().nullable(),
   departureConstraint: z.object({
-    day: z.enum(["game_day", "day_before", "two_days_before"]).nullable(),
+    day: looseEnum(DEPARTURE_DAYS).nullable(),
     earliestTime: HHMM.nullable(),
     note: z.string().nullable(),
   }),
@@ -32,7 +39,7 @@ export const RecommendationSchema = z.object({
 export type RecommendationOut = z.infer<typeof RecommendationSchema>;
 
 export const WhatIfCommandSchema = z.object({
-  action: z.enum([
+  action: looseEnum([
     "adjust_players",
     "adjust_coaches",
     "adjust_staff",
@@ -45,8 +52,8 @@ export const WhatIfCommandSchema = z.object({
     "unsupported",
   ]),
   amount: z.number().nullable().optional(),
-  tier: z.enum(["economy", "midscale", "upscale"]).nullable().optional(),
-  departure: z.enum(["game_day", "day_before", "two_days_before"]).nullable().optional(),
+  tier: looseEnum(["economy", "midscale", "upscale"]).nullable().optional(),
+  departure: looseEnum(DEPARTURE_DAYS).nullable().optional(),
   explanation: z.string(),
 });
 export type WhatIfCommandOut = z.infer<typeof WhatIfCommandSchema>;

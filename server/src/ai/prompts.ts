@@ -15,7 +15,8 @@ HARD RULES (never break these):
 2. You may only mention numbers that appear verbatim in the INPUT. If a number is not in the INPUT, do not write it.
 3. Refer to travel packages only by their option IDs ("A", "B", "C") and labels.
 4. All costs are estimates computed by the application; describe them as estimates.
-5. Respond with ONLY a single JSON object that matches the JSON SCHEMA. No markdown, no code fences, no commentary.`;
+5. Respond with ONLY a single JSON object that matches the JSON SCHEMA. No markdown, no code fences, no commentary.
+6. Copy enum values exactly as the JSON SCHEMA spells them, including underscores (e.g. "day_before", "adjust_players").`;
 
 function build(task: string, schema: string, input: unknown): string {
   return `${RULES}

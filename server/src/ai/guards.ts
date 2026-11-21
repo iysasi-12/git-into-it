@@ -58,6 +58,20 @@ const NUMBER_WORDS: Record<string, number> = {
   nine: 9,
   ten: 10,
 };
+const enumKey = (s: string) => s.toLowerCase().replace(/[\s_-]/g, "");
+
+/**
+ * Map a near-miss enum value onto the allowed spelling. Live Aivana tends to drop
+ * underscores ("adjustplayers", "daybefore"). Only maps when exactly one allowed
+ * value matches, ignoring case, spaces, underscores and hyphens; anything else is
+ * returned unchanged so zod still rejects it. Never touches numbers.
+ */
+export function canonicalEnum(value: unknown, allowed: readonly string[]): unknown {
+  if (typeof value !== "string" || allowed.includes(value)) return value;
+  const hits = allowed.filter((a) => enumKey(a) === enumKey(value));
+  return hits.length === 1 ? hits[0] : value;
+}
+
 /** Numbers the user typed (used to verify user-supplied values like budget caps). */
 export function numbersInText(text: string): number[] {
   const digits = (text.match(NUM_IN_TEXT) ?? []).map(toNum);

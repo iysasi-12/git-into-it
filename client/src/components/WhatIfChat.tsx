@@ -24,7 +24,7 @@ export function WhatIfChat({ planner }: { planner: Planner }) {
           {planner.modifiers.map((m, i) => (
             <span key={i} className="inline-flex items-center gap-1 rounded-full bg-orange-50 px-3 py-1 text-xs text-ink ring-1 ring-brand/30">
               {m.explanation}
-              <button onClick={() => planner.removeModifier(i)} disabled={busy} className="font-bold text-brand hover:text-brand-dark" aria-label="Undo">
+              <button onClick={() => planner.removeModifier(i)} disabled={busy} className="-my-1 -mr-2 px-2 py-1 text-base leading-none font-bold text-brand hover:text-brand-dark" aria-label="Undo">
                 ×
               </button>
             </span>
