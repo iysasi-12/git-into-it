@@ -1,6 +1,43 @@
 import { describe, expect, it } from "vitest";
-import { allowedNumbers, extractJson, scrubText } from "./guards.js";
+import { allowedNumbers, canonicalEnum, extractJson, scrubText } from "./guards.js";
 import { heuristicWhatIf } from "./heuristics.js";
+import { ParsedRequestSchema, WhatIfCommandSchema } from "./schemas.js";
+
+describe("enum spelling repair", () => {
+  const actions = ["adjust_players", "adjust_buses", "unsupported"];
+
+  it("maps near-miss spellings onto the one allowed value", () => {
+    expect(canonicalEnum("adjustplayers", actions)).toBe("adjust_players");
+    expect(canonicalEnum("Adjust Buses", actions)).toBe("adjust_buses");
+    expect(canonicalEnum("two-days-before", ["day_before", "two_days_before"])).toBe("two_days_before");
+  });
+
+  it("leaves unknown, ambiguous and non-string values alone", () => {
+    expect(canonicalEnum("teleport", actions)).toBe("teleport");
+    expect(canonicalEnum("ab", ["a_b", "a-b"])).toBe("ab");
+    expect(canonicalEnum(-3, actions)).toBe(-3);
+    expect(canonicalEnum(null, actions)).toBe(null);
+  });
+
+  // Exact answers captured from live Aivana on 2026-11-21.
+  it("accepts the live what-if answer and keeps its numbers untouched", () => {
+    const live = { action: "adjustplayers", amount: -3, tier: null, departure: null, explanation: "Leave 3 players home." };
+    expect(WhatIfCommandSchema.parse(live)).toMatchObject({ action: "adjust_players", amount: -3 });
+  });
+
+  it("accepts the live parse answer's departure day", () => {
+    const live = {
+      opponent: "Ohio State University", gameDate: "2027-10-10", players: 65, coaches: 8, staff: 4,
+      departureConstraint: { day: "daybefore", earliestTime: null, note: "Leave Friday after classes." },
+      specialRequests: ["We need a vegetarian option at team meals."],
+    };
+    expect(ParsedRequestSchema.parse(live).departureConstraint.day).toBe("day_before");
+  });
+
+  it("still rejects actions that are not in the list", () => {
+    expect(WhatIfCommandSchema.safeParse({ action: "teleport_team", explanation: "x" }).success).toBe(false);
+  });
+});
 
 describe("guards", () => {
   const facts = { options: [{ id: "A", totalCost: 6674 }, { id: "B", totalCost: 21395 }], comparisons: [{ costDifference: 14721 }] };
