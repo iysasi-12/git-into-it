@@ -1,5 +1,6 @@
 import type { OptionId, PlanResult, TravelOption } from "@app/shared";
 import { round2, weekday } from "./calculator.js";
+import { dayLabel, usDate, usTime } from "./displayFormat.js";
 
 // Compact, app-computed fact sheets handed to the AI. Every number the AI is
 // allowed to mention must appear here (including pre-computed differences).
@@ -65,8 +66,10 @@ export function memoFacts(plan: PlanResult, option: TravelOption) {
     trip: planFacts(plan).trip,
     stadium: plan.venue.stadium,
     gameTime: plan.request.gameTime,
+    gameDateDisplay: usDate(plan.request.gameDate),
     chosenOption: optionFacts(option),
-    timeline: option.timeline.map((e) => ({ ...e, weekday: weekday(e.date) })),
-    meals: option.meals.map((m) => ({ date: m.date, weekday: weekday(m.date), meal: m.meal, label: m.label })),
+    // `day` / `displayTime` are the formats people see (MM/DD/YYYY, 12-hour Eastern).
+    timeline: option.timeline.map((e) => ({ ...e, weekday: weekday(e.date), day: dayLabel(e.date), displayTime: usTime(e.time) })),
+    meals: option.meals.map((m) => ({ date: m.date, weekday: weekday(m.date), day: dayLabel(m.date), meal: m.meal, label: m.label })),
   };
 }

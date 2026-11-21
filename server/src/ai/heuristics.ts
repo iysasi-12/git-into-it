@@ -1,5 +1,4 @@
 import type { DepartureDay, PlanResult, TravelOption, WhatIfCommand } from "@app/shared";
-import { weekday } from "../engine/calculator.js";
 import type { memoFacts } from "../engine/summary.js";
 import type { MemoOut, ParsedRequest, RecommendationOut } from "./schemas.js";
 
@@ -155,18 +154,17 @@ export function heuristicRecommend(plan: PlanResult): RecommendationOut {
 
 export function heuristicMemo(facts: ReturnType<typeof memoFacts>): MemoOut {
   const o = facts.chosenOption;
-  const dayLabel = (d: string) => `${weekday(d)} ${d}`;
   return {
-    title: `Travel Memo: ${facts.trip.opponent} (${facts.trip.gameDate})`,
+    title: `Travel Memo: ${facts.trip.opponent} (${facts.gameDateDisplay})`,
     summary: `${o.travelers} travelers will travel to ${facts.trip.city} on ${o.buses.count} ${o.buses.type} bus(es) under Option ${o.id} (${o.label}). ${o.hotel ? `The team stays ${o.nights} night(s) at ${o.hotel.name}.` : "This is a same-day trip with no hotel stay."} Estimated total cost: ${fmt(o.totalCost)}.`,
-    itinerary: facts.timeline.map((e) => ({ day: dayLabel(e.date), time: e.time, activity: e.event })),
+    itinerary: facts.timeline.map((e) => ({ day: e.day, time: e.displayTime, activity: e.event })),
     departureReminders: [
-      `Report to the bus loading area at ${facts.timeline[0]?.time ?? "the scheduled time"} on ${facts.timeline[0] ? dayLabel(facts.timeline[0].date) : "departure day"}.`,
+      `Report to the bus loading area at ${facts.timeline[0]?.displayTime ?? "the scheduled time"} on ${facts.timeline[0]?.day ?? "departure day"}.`,
       "Equipment and trainer kits loaded before team boarding.",
       "Bring student ID and a printed or digital copy of this itinerary.",
       "Check the weather forecast at the destination the day before departure.",
       ...facts.trip.specialRequests.map((r) => `Special request: ${r}`),
     ],
-    mealSchedule: facts.meals.map((m) => ({ day: dayLabel(m.date), meal: m.meal, note: m.label })),
+    mealSchedule: facts.meals.map((m) => ({ day: m.day, meal: m.meal, note: m.label })),
   };
 }
