@@ -80,11 +80,15 @@ export function usePlanner() {
     });
 
   const generatePlan = async (request: TripRequest) => {
-    setBaseRequest(request);
-    setChat([]);
-    setMemo(null);
-    await replan(request, []);
-  };
+  setBaseRequest(request);
+
+  setPreviousPlan(null);
+
+  setChat([]);
+  setMemo(null);
+
+  await replan(request, []);
+};
 
   const sendWhatIf = (message: string) =>
     baseRequest &&
@@ -110,10 +114,16 @@ export function usePlanner() {
       }
     });
 
-  const removeModifier = (index: number) => {
-    if (!baseRequest) return;
-    void replan(baseRequest, modifiers.filter((_, i) => i !== index));
-  };
+    const removeModifier = (index: number) => {
+      if (!baseRequest) return;
+
+  setPreviousPlan(plan);
+
+  void replan(
+    baseRequest,
+    modifiers.filter((_, i) => i !== index)
+  );
+};
 
   const generateMemo = (optionId: OptionId) =>
     baseRequest && run("memo", async () => {
