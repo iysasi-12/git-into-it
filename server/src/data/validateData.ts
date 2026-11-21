@@ -25,6 +25,12 @@ const HotelSchema = z.object({
   distanceToStadiumMiles: z.number().positive(),
 });
 
+const ScheduledGameSchema = z.object({
+  opponentId: z.string().min(1),
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  gameTime: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/),
+});
+
 const BusTypeSchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1),
@@ -83,6 +89,13 @@ for (const h of ds.hotels) {
   }
 }
 
+// every scheduled game is well-formed and points at a real venue
+ds.schedule.forEach((g, i) => {
+  const r = ScheduledGameSchema.safeParse(g);
+  if (!r.success) errors.push(`schedule[${i}]: ${r.error.issues.map((x) => `${x.path.join(".")}: ${x.message}`).join(", ")}`);
+  if (!venueIds.has(g.opponentId)) errors.push(`schedule[${i}]: opponentId "${g.opponentId}" not found in venues`);
+});
+
 const warnings: string[] = [];
 for (const v of ds.venues) {
   for (const tier of ["economy", "midscale", "upscale"] as const) {
@@ -97,4 +110,4 @@ if (errors.length) {
   console.error(`❌ ${errors.length} problem(s):\n- ${errors.join("\n- ")}`);
   process.exit(1);
 }
-console.log(`✅ Dataset OK: ${ds.venues.length} venues, ${ds.hotels.length} hotels`);
+console.log(`✅ Dataset OK: ${ds.venues.length} venues, ${ds.hotels.length} hotels, ${ds.schedule.length} scheduled games`);

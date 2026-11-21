@@ -3,6 +3,7 @@ import type {
   MemoResponse,
   OpponentSummary,
   ParseResponse,
+  ScheduledGame,
   PlanResponse,
   RecommendResponse,
   WhatIfCommand,
@@ -31,6 +32,12 @@ api.get("/opponents", (_req, res) => {
     distanceMiles: v.distanceMiles,
     driveHours: v.driveHours,
   }));
+  res.json(list);
+});
+
+// Sample away schedule; the client uses it to pre-fill the trip form.
+api.get("/schedule", (_req, res) => {
+  const list: ScheduledGame[] = getDataset().schedule;
   res.json(list);
 });
 

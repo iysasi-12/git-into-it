@@ -1,7 +1,7 @@
 import { useState } from "react";
-import type { DepartureDay, TripRequest } from "@app/shared";
+import type { DepartureDay, ScheduledGame, TripRequest } from "@app/shared";
 import type { Planner } from "../hooks/usePlanner";
-import { DEPARTURE_LABELS } from "../lib/format";
+import { DEPARTURE_LABELS, prettyTime } from "../lib/format";
 import {
   Button,
   Card,
@@ -77,8 +77,18 @@ function FreeTextInput({
   );
 }
 
+const scheduleKey = (g?: ScheduledGame) => (g ? `${g.opponentId}|${g.date}` : "");
+
+/** "Sat 10/09/2027" (display only). */
+function scheduleDate(iso: string) {
+  const d = new Date(`${iso}T00:00:00`);
+  const weekday = d.toLocaleDateString("en-US", { weekday: "short" });
+  const [y, m, day] = iso.split("-");
+  return `${weekday} ${m}/${day}/${y}`;
+}
+
 function RequestForm({ planner }: { planner: Planner }) {
-  const { draft, setDraft, opponents, missingFields } = planner;
+  const { draft, setDraft, opponents, schedule, missingFields } = planner;
   const [formError, setFormError] = useState<string | null>(null);
   const set = <K extends keyof TripRequest>(k: K, v: TripRequest[K] | undefined) => setDraft((d) => ({ ...d, [k]: v }));
   const num = (v: string) => (v === "" ? undefined : Math.max(0, Math.trunc(Number(v))));
@@ -110,6 +120,26 @@ function RequestForm({ planner }: { planner: Planner }) {
         <p className="rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-800">
           Aivana couldn't find: {missingFields.join(", ")}. Please complete below.
         </p>
+      )}
+      {schedule.length > 0 && (
+        <div>
+          <label className={labelCls}>From the schedule (sample 2027)</label>
+          <select
+            className={input}
+            value={scheduleKey(schedule.find((g) => g.opponentId === draft.opponentId && g.date === draft.gameDate))}
+            onChange={(e) => {
+              const g = schedule.find((x) => scheduleKey(x) === e.target.value);
+              if (g) setDraft((d) => ({ ...d, opponentId: g.opponentId, gameDate: g.date, gameTime: g.gameTime }));
+            }}
+          >
+            <option value="">Pick a game or fill in below…</option>
+            {schedule.map((g) => (
+              <option key={scheduleKey(g)} value={scheduleKey(g)}>
+                {scheduleDate(g.date)} · at {opponents.find((o) => o.id === g.opponentId)?.school ?? g.opponentId} · {prettyTime(g.gameTime)} local
+              </option>
+            ))}
+          </select>
+        </div>
       )}
       <div>
         <label className={labelCls}>Opponent (away game at)</label>

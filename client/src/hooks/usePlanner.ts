@@ -6,6 +6,7 @@ import type {
   OptionId,
   PlanResult,
   Recommendation,
+  ScheduledGame,
   TripRequest,
   WhatIfCommand,
 } from "@app/shared";
@@ -32,6 +33,7 @@ export const EMPTY_DRAFT: Partial<TripRequest> = {
 /** All app state + actions. The server is stateless; we hold request + modifiers. */
 export function usePlanner() {
   const [opponents, setOpponents] = useState<OpponentSummary[]>([]);
+  const [schedule, setSchedule] = useState<ScheduledGame[]>([]);
   const [draft, setDraft] = useState<Partial<TripRequest>>(EMPTY_DRAFT);
   const [missingFields, setMissingFields] = useState<string[]>([]);
   const [baseRequest, setBaseRequest] = useState<TripRequest | null>(null);
@@ -60,6 +62,8 @@ export function usePlanner() {
 
   useEffect(() => {
     api.opponents().then(setOpponents).catch((e: Error) => setError(e.message));
+    // Optional: the form works without it, so a failure just hides the picker.
+    api.schedule().then(setSchedule).catch(() => setSchedule([]));
   }, []);
 
   const parseText = (text: string) =>
@@ -140,6 +144,7 @@ export function usePlanner() {
 
   return {
     opponents,
+    schedule,
     draft,
     setDraft,
     missingFields,

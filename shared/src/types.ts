@@ -77,6 +77,14 @@ export interface Dataset {
   busTypes: BusType[];
   mealRates: MealRates;
   policy: TravelPolicy;
+  schedule: ScheduledGame[];
+}
+
+/** One game on the (sample) away schedule; picking it pre-fills the trip form. */
+export interface ScheduledGame {
+  opponentId: string; // Venue.id
+  date: string; // YYYY-MM-DD
+  gameTime: string; // HH:MM, stadium-local
 }
 
 // ---------------------------------------------------------------------------

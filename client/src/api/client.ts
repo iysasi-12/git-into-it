@@ -8,6 +8,7 @@ import type {
   PlanResponse,
   RecommendRequestBody,
   RecommendResponse,
+  ScheduledGame,
   WhatIfRequestBody,
   WhatIfResponse,
 } from "@app/shared";
@@ -34,6 +35,7 @@ const post = <T>(path: string, body: unknown) => request<T>(path, { method: "POS
 
 export const api = {
   opponents: () => request<OpponentSummary[]>("/opponents"),
+  schedule: () => request<ScheduledGame[]>("/schedule"),
   parse: (text: string) => post<ParseResponse>("/parse", { text }),
   plan: (body: PlanRequestBody) => post<PlanResponse>("/plan", body),
   recommend: (body: RecommendRequestBody) => post<RecommendResponse>("/recommend", body),

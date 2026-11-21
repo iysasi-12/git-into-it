@@ -24,6 +24,7 @@ Live Aivana is slow (recommend and memo can take 15–45 s), so keep the default
 
 ## What you can do
 
+- **Start from the schedule:** pick a game from the sample 2027 away schedule to fill in opponent, date and kickoff, or type a request and let Aivana extract the details.
 - **Compare three options** with a cost chart and line-item breakdown. Options appear instantly; Aivana's ★ recommendation loads afterwards, with a seconds counter while it works.
 - **Show the math:** click any cost (an option total, a line item, a chart total or a row in the memo's cost table) to see the formula and the dataset values behind it.
 - **What-if chat:** "Leave 3 players home", "Cap hotel budget at $7000". Each change is a chip you can undo.
@@ -63,6 +64,7 @@ client (React)  ──/api──▶  routes ──▶ engine/  (pure calculation
 |---|---|
 | `GET /api/health` | health check |
 | `GET /api/opponents` | venues for the form |
+| `GET /api/schedule` | sample away schedule that pre-fills the form |
 | `POST /api/parse` | free text → structured request (Aivana) |
 | `POST /api/plan` | request + modifiers → 3 options (instant, no AI) |
 | `POST /api/recommend` | request + modifiers → recommendation (Aivana; slow live, so the client loads it after the options) |
@@ -71,7 +73,7 @@ client (React)  ──/api──▶  routes ──▶ engine/  (pure calculation
 
 ## About the dataset
 
-No official dataset was provided, so the team built a sample one in `server/data/*.json`: 15 away venues (every MAC opponent plus Ohio State, Michigan and Penn State) with approximate distances from Bowling Green, fictional hotels in three tiers (at least 3 per venue), bus types, meal rates and travel policy. Every price is an illustrative estimate, and the app labels costs that way. It is still the **only** source of numbers: the engine calculates from it, and the AI never adds figures of its own.
+No official dataset was provided, so the team built a sample one in `server/data/*.json`: 15 away venues (every MAC opponent plus Ohio State, Michigan and Penn State) with approximate distances from Bowling Green, fictional hotels in three tiers (at least 3 per venue), bus types, meal rates, travel policy and a sample 2027 away schedule (6 games; not BGSU's official schedule). Every price is an illustrative estimate, and the app labels costs that way. It is still the **only** source of numbers: the engine calculates from it, and the AI never adds figures of its own.
 
 The dataset is **frozen**: add entries, but don't change existing values. Run `npm -w server run validate-data` after any edit. If new data changes a tested scenario, re-derive the hand-computed expectations in `server/src/engine/engine.test.ts`; don't paste in what the code outputs. Only `loadDataset()` in `server/src/data/dataRepository.ts` knows the file layout.
 
@@ -103,7 +105,9 @@ Venues can have an optional `timeZone` (`"ET"` or `"CT"`, default ET). Only Nort
 ## Known limits
 
 - **Sample data.** No data pack was provided, so prices, distances and hotels come from our own sample dataset (15 venues, fictional hotels, illustrative rates). Costs are estimates, not quotes, and there is no live hotel availability or real map routing.
-- **Headcounts, not a roster.** The planner works from player, coach and staff counts; there is no named roster, rooming list or restaurant list (meals use per-tier rates).
+- **Headcounts, not a roster.** The planner works from player, coach and staff counts; there is no named roster or rooming list.
+- **No restaurant list.** Meals are costed from per-tier rates per person, not from specific restaurants and their prices.
+- **Sample schedule.** The game picker uses our own sample 2027 away schedule, not BGSU's official one.
 - **Settings.** Seats per bus and meal allowances are fixed in the dataset and can't be edited in the UI. Players per room can be changed through the what-if chat ("put 3 players per room"); other occupancy values are fixed.
 - **Speed.** Live Aivana takes about 8–20 s for parse and what-if and 15–45 s for the recommendation and memo. The memo isn't streamed.
 - **One change per what-if message.** "Leave 3 players home and cap the hotel at $7000" applies only one of the two.
