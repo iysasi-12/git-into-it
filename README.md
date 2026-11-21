@@ -58,7 +58,7 @@ client (React)  ──/api──▶  routes ──▶ engine/  (pure calculation
   - A budget cap must be a number the user actually typed.
   - Cost tables in the UI and memo are rendered from engine data, never from AI text. The memo's itinerary days and times come from the engine timeline too; Aivana only words the activities.
   - In live mode, the AI endpoints are rate-limited per IP (`AI_RATE_LIMIT`, default 60 requests per 10 minutes; one demo run uses about 15).
-- **Fallback.** If Aivana fails or returns invalid output, the same heuristics take over (the UI shows "Rules fallback").
+- **Fallback.** If Aivana fails or returns invalid output, the same heuristics take over (the UI shows "Rules fallback"). One exception: when Aivana answers 429 because too many of our requests are running at once (`bucket: "concurrency"`), the client waits `retry_after_ms` (at most 10 s, within the same timeout) and retries once first.
 
 | Endpoint | Purpose |
 |---|---|
