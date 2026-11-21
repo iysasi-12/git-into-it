@@ -280,10 +280,18 @@ export interface RecommendResponse {
   recommendation: Recommendation;
 }
 
+/** One earlier turn of the what-if chat, sent so Aivana can resolve "do the same for coaches". */
+export interface ChatTurn {
+  role: "user" | "assistant";
+  text: string;
+}
+
 export interface WhatIfRequestBody {
   request: TripRequest;
   modifiers: WhatIfCommand[];
   message: string;
+  /** Earlier chat turns, oldest first (the server keeps only the last few). */
+  history?: ChatTurn[];
 }
 
 export interface WhatIfResponse extends PlanResponse {

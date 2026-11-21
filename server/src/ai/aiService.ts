@@ -1,6 +1,7 @@
 import type { z } from "zod";
 import type {
   AiSource,
+  ChatTurn,
   DepartureDay,
   ParseResponse,
   PlanResult,
@@ -14,11 +15,12 @@ import { env } from "../config/env.js";
 import { getDataset, matchVenue } from "../data/dataRepository.js";
 import { addDays, nightsFor, weekday } from "../engine/calculator.js";
 import { memoFacts, planFacts } from "../engine/summary.js";
-import { generate } from "./aivanaClient.js";
+import { AivanaError, generate, type AivanaMessage } from "./aivanaClient.js";
 import { allowedNumbers, extractJson, numbersInText, scrubDeep } from "./guards.js";
 import { heuristicMemo, heuristicParse, heuristicRecommend, heuristicWhatIf } from "./heuristics.js";
 import { prompts } from "./prompts.js";
 import {
+  jsonSchemaObject,
   MemoSchema,
   ParsedRequestSchema,
   RecommendationSchema,
@@ -29,8 +31,37 @@ import {
 // Orchestrates AI tasks: prompt -> Aivana -> JSON extract -> zod validate (retry once) -> guards.
 // Never computes business numbers; it only receives app-computed facts.
 
-async function callStructured<S extends z.ZodTypeAny>(prompt: string, schema: S, timeoutMs?: number): Promise<z.infer<S>> {
-  let answer = await generate(prompt, timeoutMs);
+interface StructuredOptions {
+  timeoutMs?: number;
+  /** Send the schema as Aivana's native response_format (only for schemas Aivana accepts). */
+  native?: boolean;
+}
+
+/** Ask once with the schema as response_format; if Aivana refuses it (400/422), ask again without. */
+async function generateStructured(input: string | AivanaMessage[], schema: z.ZodTypeAny, opts: StructuredOptions): Promise<string> {
+  if (!opts.native) return generate(input, { timeoutMs: opts.timeoutMs });
+  try {
+    return await generate(input, { timeoutMs: opts.timeoutMs, jsonSchema: jsonSchemaObject(schema) });
+  } catch (err) {
+    if (!(err instanceof AivanaError) || (err.status !== 400 && err.status !== 422)) throw err;
+    console.warn("[aivana] response_format refused, retrying with the schema in the prompt only:", err.message);
+    return generate(input, { timeoutMs: opts.timeoutMs });
+  }
+}
+
+/** The same input with its last user turn replaced by a repair request. */
+function withRepair(input: string | AivanaMessage[], answer: string, error: string): string | AivanaMessage[] {
+  if (typeof input === "string") return prompts.repair(input, answer, error);
+  const last = input[input.length - 1];
+  return [...input.slice(0, -1), { ...last, content: prompts.repair(last.content, answer, error) }];
+}
+
+async function callStructured<S extends z.ZodTypeAny>(
+  input: string | AivanaMessage[],
+  schema: S,
+  opts: StructuredOptions = {},
+): Promise<z.infer<S>> {
+  let answer = await generateStructured(input, schema, opts);
   for (let attempt = 0; ; attempt++) {
     let error: string;
     try {
@@ -41,7 +72,7 @@ async function callStructured<S extends z.ZodTypeAny>(prompt: string, schema: S,
       error = (e as Error).message;
     }
     if (attempt >= 1) throw new Error(`Aivana returned invalid structured output: ${error}`);
-    answer = await generate(prompts.repair(prompt, answer, error), timeoutMs);
+    answer = await generateStructured(withRepair(input, answer, error), schema, opts);
   }
 }
 
@@ -96,7 +127,7 @@ export async function recommend(plan: PlanResult): Promise<Recommendation> {
   const facts = planFacts(plan);
   const { value, source } = await withFallback(
     "recommend",
-    () => callStructured(prompts.recommend(facts), RecommendationSchema, env.aivanaSlowTimeoutMs),
+    () => callStructured(prompts.recommend(facts), RecommendationSchema, { timeoutMs: env.aivanaSlowTimeoutMs, native: true }),
     () => heuristicRecommend(plan),
   );
   const guardNotes: string[] = [];
@@ -107,7 +138,14 @@ export async function recommend(plan: PlanResult): Promise<Recommendation> {
   return { ...clean, tradeoffs, source, guardNotes };
 }
 
-export async function interpretWhatIf(message: string, plan: PlanResult): Promise<{ command: WhatIfCommand; source: AiSource }> {
+/** Earlier what-if turns sent to Aivana (kept short to limit tokens). */
+const WHATIF_HISTORY_TURNS = 6;
+
+export async function interpretWhatIf(
+  message: string,
+  plan: PlanResult,
+  history: ChatTurn[] = [],
+): Promise<{ command: WhatIfCommand; source: AiSource }> {
   const departureDays: DepartureDay[] = ["game_day", "day_before", "two_days_before"];
   const context = {
     gameDate: plan.request.gameDate,
@@ -125,7 +163,15 @@ export async function interpretWhatIf(message: string, plan: PlanResult): Promis
   };
   const { value, source } = await withFallback(
     "whatif",
-    () => callStructured(prompts.interpretWhatIf(message, context), WhatIfCommandSchema),
+    () => {
+      // Multi-turn: earlier turns go first so Aivana can resolve references ("do the same for coaches").
+      const prompt = prompts.interpretWhatIf(message, context);
+      const turns = history.slice(-WHATIF_HISTORY_TURNS);
+      const input: string | AivanaMessage[] = turns.length
+        ? [...turns.map((t): AivanaMessage => ({ role: t.role, content: t.text })), { role: "user", content: prompt }]
+        : prompt;
+      return callStructured(input, WhatIfCommandSchema);
+    },
     () => heuristicWhatIf(message),
   );
   const command: WhatIfCommand = {
@@ -136,9 +182,12 @@ export async function interpretWhatIf(message: string, plan: PlanResult): Promis
     ...(value.departure && { departure: value.departure }),
   };
 
+  // Numbers the USER typed, in this message or an earlier user turn (never an assistant turn).
+  const userText = [...history.slice(-WHATIF_HISTORY_TURNS).filter((t) => t.role === "user").map((t) => t.text), message].join("\n");
+
   // Guard: a budget cap must be a number the USER typed, never one the AI made up.
   if (command.action === "set_hotel_budget_cap") {
-    const typed = numbersInText(message).flatMap((n) => [n, n * 1000]);
+    const typed = numbersInText(userText).flatMap((n) => [n, n * 1000]);
     if (command.amount == null || !typed.some((n) => Math.abs(n - command.amount!) < 0.01)) {
       return {
         command: { action: "unsupported", explanation: "Please state the hotel budget cap as a dollar amount (e.g. \"cap hotel at $7000\")." },
@@ -149,7 +198,7 @@ export async function interpretWhatIf(message: string, plan: PlanResult): Promis
 
   // Guard: player occupancy must match a number the USER typed.
   if (command.action === "set_player_occupancy") {
-    const typed = numbersInText(message);
+    const typed = numbersInText(userText);
 
     if (
       command.amount == null ||
@@ -172,7 +221,7 @@ export async function writeMemo(plan: PlanResult, option: TravelOption): Promise
   const facts = memoFacts(plan, option);
   const { value, source } = await withFallback(
     "memo",
-    () => callStructured(prompts.memo(facts), MemoSchema, env.aivanaSlowTimeoutMs),
+    () => callStructured(prompts.memo(facts), MemoSchema, { timeoutMs: env.aivanaSlowTimeoutMs, native: true }),
     () => heuristicMemo(facts),
   );
   const guardNotes: string[] = [];

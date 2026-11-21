@@ -67,8 +67,13 @@ export const MemoSchema = z.object({
 });
 export type MemoOut = z.infer<typeof MemoSchema>;
 
-export function jsonSchemaText(schema: z.ZodTypeAny): string {
+/** The JSON Schema for a zod schema (inlined, no $ref), as sent in Aivana's response_format. */
+export function jsonSchemaObject(schema: z.ZodTypeAny): Record<string, unknown> {
   const { $schema, ...rest } = zodToJsonSchema(schema, { $refStrategy: "none" }) as Record<string, unknown>;
   void $schema;
-  return JSON.stringify(rest);
+  return rest;
+}
+
+export function jsonSchemaText(schema: z.ZodTypeAny): string {
+  return JSON.stringify(jsonSchemaObject(schema));
 }

@@ -31,7 +31,16 @@ const ModifiersSchema = z
 
 export const ParseBody = z.object({ text: z.string().min(5).max(2000) });
 export const PlanBody = z.object({ request: TripRequestSchema, modifiers: ModifiersSchema });
-export const WhatIfBody = z.object({ request: TripRequestSchema, modifiers: ModifiersSchema, message: z.string().min(2).max(500) });
+const ChatHistorySchema = z
+  .array(z.object({ role: z.enum(["user", "assistant"]), text: z.string().min(1).max(1000) }))
+  .max(20)
+  .default([]);
+export const WhatIfBody = z.object({
+  request: TripRequestSchema,
+  modifiers: ModifiersSchema,
+  message: z.string().min(2).max(500),
+  history: ChatHistorySchema,
+});
 export const MemoBody = z.object({ request: TripRequestSchema, modifiers: ModifiersSchema, optionId: z.enum(["A", "B", "C"]) });
 
 export function validate<S extends z.ZodTypeAny>(schema: S, body: unknown): z.infer<S> {
