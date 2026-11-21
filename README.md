@@ -115,3 +115,13 @@ Venues can have an optional `timeZone` (`"ET"` or `"CT"`, default ET). Only Nort
 - **Fallback detail.** If Aivana fails (rate limit, empty balance, timeout), the rules fallback answers and the UI shows "Rules fallback", but it doesn't say which error occurred.
 - **Time zones.** Venues are ET or CT only, and kickoffs after 11 PM Central aren't handled.
 - **No saved trips.** The server is stateless; reloading the page starts over.
+
+## Team
+
+Built for the BGSU Hackathon 2026 by a team of three.
+
+| Who | Role | Built |
+|---|---|---|
+| **Israel** | Lead | Architecture, cost engine, Aivana integration, prompts and guardrails, sample dataset, schedule picker, mobile layout and loading skeletons, deploy and PR reviews |
+| **Oliver** | Frontend | Cost breakdown chart, "what changed" deltas after a what-if, Copy memo as text, and the seconds counter while Aivana works |
+| **Mika** | Data and tests | Hand-calculated test trips, the dataset validation script, edge-case tests, more what-if phrasings, the players-per-room what-if, and saved live Aivana answers as regression tests |
