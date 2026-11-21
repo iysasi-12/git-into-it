@@ -1,7 +1,30 @@
 import { describe, expect, it } from "vitest";
 import { allowedNumbers, canonicalEnum, extractJson, numbersInText, scrubText } from "./guards.js";
-import { heuristicWhatIf } from "./heuristics.js";
+import { heuristicParse, heuristicWhatIf } from "./heuristics.js";
 import { ParsedRequestSchema, WhatIfCommandSchema } from "./schemas.js";
+
+describe("heuristicParse counts", () => {
+  const parse = (text: string) => heuristicParse(text, "2026-11-21", "University of Michigan");
+
+  it("reads 'no staff' as 0, not missing", () => {
+    expect(parse("Michigan Dec 12, 50 players, 6 coaches, no staff.")).toMatchObject({ players: 50, coaches: 6, staff: 0 });
+  });
+
+  it("reads 'zero coaches' and 'without staff' as 0", () => {
+    expect(parse("Michigan Dec 12, 50 players, zero coaches, 3 staff.").coaches).toBe(0);
+    expect(parse("Michigan Dec 12, 50 players, 6 coaches, without staff.").staff).toBe(0);
+  });
+
+  it("leaves a count null when it isn't mentioned", () => {
+    expect(parse("Michigan Dec 12, 50 players, 3 staff.").coaches).toBeNull();
+  });
+
+  // Unclear wording stays null on purpose: the form asks again instead of guessing 0.
+  it("leaves 'no extra staff' and 'staff: none' null", () => {
+    expect(parse("Michigan Dec 12, 50 players, 6 coaches, no extra staff.").staff).toBeNull();
+    expect(parse("Michigan Dec 12, 50 players, 6 coaches, staff: none.").staff).toBeNull();
+  });
+});
 
 describe("enum spelling repair", () => {
   const actions = ["adjust_players", "adjust_buses", "unsupported"];
