@@ -11,11 +11,16 @@ describe("matchVenue", () => {
     ["Bobcats game in Athens", "ohio"],
     ["Plan our trip to Toledo", "toledo"],
     ["Leaving Bowling Green, Ohio for Akron", "akron"],
+    ["Game in Mt. Pleasant on Saturday", "central-michigan"],
   ])("%s -> %s", (text, id) => {
     expect(matchVenue(text)?.id).toBe(id);
   });
 
   it("does not match plain 'Ohio' to Ohio University", () => {
     expect(matchVenue("Leaving Bowling Green, Ohio on Friday")).toBeUndefined();
+  });
+
+  it("returns undefined for a school that is not in the dataset", () => {
+    expect(matchVenue("Plan our trip to Sacramento State")).toBeUndefined();
   });
 });
