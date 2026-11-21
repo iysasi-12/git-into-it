@@ -1,7 +1,10 @@
 import type { DepartureDay } from "@app/shared";
 
 export const money = (n: number) => n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
-export const money2 = (n: number) => n.toLocaleString("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 2 });
+/** Dollars with cents only when the amount has them ($179, $3.25). */
+export const exact = (n: number) =>
+  n.toLocaleString("en-US", { style: "currency", currency: "USD", minimumFractionDigits: Number.isInteger(n) ? 0 : 2, maximumFractionDigits: 2 });
+export const money2 =(n: number) => n.toLocaleString("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 2 });
 
 export const DEPARTURE_LABELS: Record<DepartureDay, string> = {
   game_day: "Game day",

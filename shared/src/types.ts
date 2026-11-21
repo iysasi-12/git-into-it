@@ -132,6 +132,24 @@ export interface WhatIfCommand {
 // Calculated plan (100% app-computed)
 // ---------------------------------------------------------------------------
 
+/** One input to a line-item calculation and where it came from. */
+export interface CalcFactor {
+  value: number;
+  /** For counts: "rooms", "nights". For money factors: the per-unit basis ("room-night"). */
+  unit: string;
+  /** True for a dollar rate (shown as "$179/room-night"). */
+  money?: boolean;
+  /** Where the number came from, e.g. "Columbus Riverside Hotel nightly rate, from the dataset". */
+  source: string;
+}
+
+/** App-computed explanation of a line item: the factors multiply to `total`. */
+export interface LineItemBasis {
+  factors: CalcFactor[];
+  /** Plain-language rules behind the factors (numbers filled in by the engine). */
+  rules: string[];
+}
+
 export interface LineItem {
   category: "bus" | "hotel" | "meals";
   label: string;
@@ -139,6 +157,7 @@ export interface LineItem {
   unit: string;
   unitCost: number;
   total: number;
+  basis: LineItemBasis;
 }
 
 export interface MealSlot {
