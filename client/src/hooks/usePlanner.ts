@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type {
   AiSource,
   MemoResponse,
@@ -17,7 +17,7 @@ export interface ChatMessage {
   source?: AiSource;
 }
 
-type LoadingKey = "parse" | "plan" | "whatif" | "memo";
+type LoadingKey = "parse" | "plan" | "whatif" | "memo" | "recommend";
 
 export const EMPTY_DRAFT: Partial<TripRequest> = {
   players: undefined,
@@ -41,7 +41,8 @@ export function usePlanner() {
   const [recommendation, setRecommendation] = useState<Recommendation | null>(null);
   const [chat, setChat] = useState<ChatMessage[]>([]);
   const [memo, setMemo] = useState<MemoResponse | null>(null);
-  const [loading, setLoading] = useState<Record<LoadingKey, boolean>>({ parse: false, plan: false, whatif: false, memo: false });
+  const [loading, setLoading] = useState<Record<LoadingKey, boolean>>({ parse: false, plan: false, whatif: false, memo: false, recommend: false });
+  const recommendSeq = useRef(0);
   const [error, setError] = useState<string | null>(null);
 
   const run = useCallback(async <T,>(key: LoadingKey, fn: () => Promise<T>): Promise<T | undefined> => {
@@ -69,12 +70,28 @@ export function usePlanner() {
       return r;
     });
 
+  /**
+   * The AI recommendation is slow live (15-35 s), so it loads after the options are shown.
+   * Only the newest request may update state: an older, slower answer would describe old numbers.
+   */
+  const refreshRecommendation = (request: TripRequest, mods: WhatIfCommand[]) => {
+    const seq = ++recommendSeq.current;
+    const isLatest = () => seq === recommendSeq.current;
+    setRecommendation(null);
+    setLoading((l) => ({ ...l, recommend: true }));
+    api
+      .recommend({ request, modifiers: mods })
+      .then((r) => isLatest() && setRecommendation(r.recommendation))
+      .catch((e: Error) => isLatest() && setError(e.message))
+      .finally(() => isLatest() && setLoading((l) => ({ ...l, recommend: false })));
+  };
+
   const replan = (request: TripRequest, mods: WhatIfCommand[]) =>
     run("plan", async () => {
       const r = await api.plan({ request, modifiers: mods });
       setPlan(r.plan);
-      setRecommendation(r.recommendation);
       setModifiers(mods);
+      refreshRecommendation(request, mods);
       return r;
     });
 
@@ -94,8 +111,9 @@ export function usePlanner() {
         const r = await api.whatIf({ request: baseRequest, modifiers, message });
         setPreviousPlan(plan);
         setPlan(r.plan);
-        setRecommendation(r.recommendation);
         setModifiers(r.modifiers);
+        // Unsupported = nothing changed, so the current recommendation still holds.
+        if (r.command.action !== "unsupported") refreshRecommendation(baseRequest, r.modifiers);
         setChat((c) => [...c, { role: "assistant", text: r.note, source: r.source }]);
         return r;
       } catch (e) {

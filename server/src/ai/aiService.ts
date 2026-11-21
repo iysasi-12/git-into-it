@@ -27,8 +27,8 @@ import {
 // Orchestrates AI tasks: prompt -> Aivana -> JSON extract -> zod validate (retry once) -> guards.
 // Never computes business numbers; it only receives app-computed facts.
 
-async function callStructured<S extends z.ZodTypeAny>(prompt: string, schema: S): Promise<z.infer<S>> {
-  let answer = await generate(prompt);
+async function callStructured<S extends z.ZodTypeAny>(prompt: string, schema: S, timeoutMs?: number): Promise<z.infer<S>> {
+  let answer = await generate(prompt, timeoutMs);
   for (let attempt = 0; ; attempt++) {
     let error: string;
     try {
@@ -39,7 +39,7 @@ async function callStructured<S extends z.ZodTypeAny>(prompt: string, schema: S)
       error = (e as Error).message;
     }
     if (attempt >= 1) throw new Error(`Aivana returned invalid structured output: ${error}`);
-    answer = await generate(prompts.repair(prompt, answer, error));
+    answer = await generate(prompts.repair(prompt, answer, error), timeoutMs);
   }
 }
 
@@ -94,7 +94,7 @@ export async function recommend(plan: PlanResult): Promise<Recommendation> {
   const facts = planFacts(plan);
   const { value, source } = await withFallback(
     "recommend",
-    () => callStructured(prompts.recommend(facts), RecommendationSchema),
+    () => callStructured(prompts.recommend(facts), RecommendationSchema, env.aivanaSlowTimeoutMs),
     () => heuristicRecommend(plan),
   );
   const guardNotes: string[] = [];
@@ -163,7 +163,7 @@ export async function writeMemo(plan: PlanResult, option: TravelOption): Promise
   const facts = memoFacts(plan, option);
   const { value, source } = await withFallback(
     "memo",
-    () => callStructured(prompts.memo(facts), MemoSchema),
+    () => callStructured(prompts.memo(facts), MemoSchema, env.aivanaSlowTimeoutMs),
     () => heuristicMemo(facts),
   );
   const guardNotes: string[] = [];

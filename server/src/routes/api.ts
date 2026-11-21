@@ -4,6 +4,7 @@ import type {
   OpponentSummary,
   ParseResponse,
   PlanResponse,
+  RecommendResponse,
   WhatIfCommand,
   WhatIfResponse,
 } from "@app/shared";
@@ -42,13 +43,23 @@ api.post(
   }),
 );
 
-// Structured request (+ modifiers) -> 3 calculated options + AI recommendation.
+// Structured request (+ modifiers) -> 3 calculated options. Engine only, so it is instant;
+// the client fetches the AI recommendation separately from /recommend.
 api.post(
   "/plan",
   asyncHandler(async (req, res) => {
     const { request, modifiers } = validate(PlanBody, req.body);
-    const plan = buildPlan(request, modifiers);
-    const body: PlanResponse = { plan, recommendation: await recommend(plan) };
+    const body: PlanResponse = { plan: buildPlan(request, modifiers) };
+    res.json(body);
+  }),
+);
+
+// Same inputs as /plan -> AI recommendation (slow live, 15-35 s, so it is its own call).
+api.post(
+  "/recommend",
+  asyncHandler(async (req, res) => {
+    const { request, modifiers } = validate(PlanBody, req.body);
+    const body: RecommendResponse = { recommendation: await recommend(buildPlan(request, modifiers)) };
     res.json(body);
   }),
 );
@@ -67,7 +78,6 @@ api.post(
       command,
       modifiers: nextModifiers,
       plan,
-      recommendation: await recommend(plan),
       note: command.action === "unsupported" ? command.explanation : `Applied: ${command.explanation}`,
       source,
     };

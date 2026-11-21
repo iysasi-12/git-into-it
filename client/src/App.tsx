@@ -48,7 +48,7 @@ export default function App() {
           {loading.plan && !plan && (
             <Card>
               <div className="flex items-center justify-center gap-3 py-16 text-stone-500">
-                <Spinner className="h-6 w-6" /> Calculating options and asking Aivana for a recommendation…
+                <Spinner className="h-6 w-6" /> Calculating options…
               </div>
             </Card>
           )}
@@ -80,7 +80,17 @@ export default function App() {
                 ))}
               </div>
 
-              {recommendation && <RecommendationPanel rec={recommendation} />}
+              {recommendation ? (
+                <RecommendationPanel rec={recommendation} />
+              ) : (
+                loading.recommend && (
+                  <Card>
+                    <div className="flex items-center gap-3 py-4 text-sm text-stone-500">
+                      <Spinner className="h-5 w-5" /> Aivana is reviewing the options… this can take up to 30 seconds.
+                    </div>
+                  </Card>
+                )
+              )}
               <p className="text-center text-xs text-stone-400">{plan.disclaimer}</p>
             </div>
           )}

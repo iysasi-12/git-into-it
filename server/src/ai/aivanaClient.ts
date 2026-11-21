@@ -10,14 +10,14 @@ export class AivanaError extends Error {
   }
 }
 
-export async function generate(prompt: string): Promise<string> {
+export async function generate(prompt: string, timeoutMs = env.aivanaTimeoutMs): Promise<string> {
   let res: Response;
   try {
     res = await fetch(`${env.aivanaBaseUrl}/generate`, {
       method: "POST",
       headers: { "X-API-Key": env.aivanaApiKey, "Content-Type": "application/json" },
       body: JSON.stringify({ prompt }),
-      signal: AbortSignal.timeout(env.aivanaTimeoutMs),
+      signal: AbortSignal.timeout(timeoutMs),
     });
   } catch (err) {
     throw new AivanaError(`Aivana request failed: ${(err as Error).message}`);

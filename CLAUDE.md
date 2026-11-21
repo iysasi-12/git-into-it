@@ -21,7 +21,7 @@ client (React+TS+Tailwind v4, Vite) --/api--> server/src/routes/api.ts
    (server is stateless; undo = drop one)  └─ ai/aiService ─> aivanaClient (fetch)
                                                  prompts · schemas (zod→JSON Schema) · guards · heuristics
 ```
-- Endpoints: `GET /api/opponents`, `POST /api/parse`, `/api/plan`, `/api/whatif`, `/api/memo`. Bodies are validated in `server/src/validation.ts`; errors use `AppError` + `middleware/errorHandler.ts`.
+- Endpoints: `GET /api/opponents`, `POST /api/parse`, `/api/plan`, `/api/recommend`, `/api/whatif`, `/api/memo`. `/plan` and `/whatif` return options without waiting on the AI; the client fetches `/recommend` afterwards (live Aivana takes 15–35 s). Bodies are validated in `server/src/validation.ts`; errors use `AppError` + `middleware/errorHandler.ts`.
 - **Aivana API:** `POST {AIVANA_BASE_URL}/generate`, header `X-API-Key`, body `{ prompt }` → `{ answer }`. There is no JSON mode, so the schema is embedded in the prompt; `callStructured` extracts the JSON, validates it, and retries once with the error.
 - **Mock/fallback:** with no key or `AIVANA_MOCK=true`, `ai/heuristics.ts` answers every task. On an AI error, the same heuristics run and the result is marked `source: "fallback"`.
 - Dataset: only `server/src/data/dataRepository.ts` (`loadDataset()`) knows the JSON file format. The rest of the code uses `Dataset` types from `shared/src/types.ts`.
