@@ -128,7 +128,7 @@ function RequestForm({ planner }: { planner: Planner }) {
           <input type="date" className={input} value={draft.gameDate ?? ""} onChange={(e) => set("gameDate", e.target.value || undefined)} />
         </div>
         <div>
-          <label className={labelCls}>Kickoff</label>
+          <label className={labelCls}>Kickoff (local time)</label>
           <input type="time" className={input} value={draft.gameTime ?? ""} onChange={(e) => set("gameTime", e.target.value || undefined)} />
         </div>
       </div>

@@ -46,6 +46,7 @@ client (React+TS+Tailwind v4, Vite) --/api--> server/src/routes/api.ts
 - **Dataset frozen (2026-11-21):** 15 venues (all MAC opponents plus Ohio State, Michigan, Penn State), 3+ hotels each. Only add entries; never change existing values. Check with `npm -w server run validate-data`.
 - Venue matching (`matchVenue`) prefers the longest matching alias ("Central Michigan" beats Michigan's "michigan"). Don't add a bare `"ohio"` alias: "Bowling Green, Ohio" would match Ohio University.
 - Toledo, Eastern Michigan, Akron and Central Michigan are short drives, so Option A is a same-day trip. UMass is a 10h drive; avoid it in demos.
+- Venues have an optional `timeZone` (`"ET"` | `"CT"`, omitted = ET); only Northern Illinois is CT. Kickoff (`gameTime`) is stadium-local; engine math runs on the campus (ET) clock (`engine/timeZones.ts`), and each timeline event carries the zone it's shown in.
 - Dates without a year roll forward to the next occurrence (in Nov 2026, "October 12" → 2027-10-12).
 - With the sample data, a $4,000 hotel cap can't be met; demo with $7,000.
 - Option A uses the latest feasible departure (game day if the drive is ≤ 3h), which differs from what the user requested. This is intentional and shown as a warning.

@@ -68,8 +68,8 @@ export function memoFacts(plan: PlanResult, option: TravelOption) {
     gameTime: plan.request.gameTime,
     gameDateDisplay: usDate(plan.request.gameDate),
     chosenOption: optionFacts(option),
-    // `day` / `displayTime` are the formats people see (MM/DD/YYYY, 12-hour Eastern).
-    timeline: option.timeline.map((e) => ({ ...e, weekday: weekday(e.date), day: dayLabel(e.date), displayTime: usTime(e.time) })),
+    // `day` / `displayTime` are the formats people see (MM/DD/YYYY, 12-hour with the event's zone).
+    timeline: option.timeline.map((e) => ({ ...e, weekday: weekday(e.date), day: dayLabel(e.date), displayTime: usTime(e.time, e.timeZone) })),
     meals: option.meals.map((m) => ({ date: m.date, weekday: weekday(m.date), day: dayLabel(m.date), meal: m.meal, label: m.label })),
   };
 }

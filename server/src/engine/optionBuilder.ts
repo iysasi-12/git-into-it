@@ -14,6 +14,7 @@ import { AppError } from "../errors.js";
 import {
   addDays,
   busCost,
+  fromMinutes,
   gameDayDepartureTime,
   hotelCost,
   latestFeasibleDeparture,
@@ -25,12 +26,14 @@ import {
   selectHotel,
   selectHotelUnderCap,
   shiftTier,
+  toMinutes,
   totalTravelers,
   weekday,
 } from "./calculator.js";
 import { applyModifiers, type Scenario } from "./modifiers.js";
 import { PROFILES, type Profile } from "./profiles.js";
 import { buildTimeline } from "./timeline.js";
+import { localToHome, venueTimeZone } from "./timeZones.js";
 
 export const DISCLAIMER =
   "All costs are estimates calculated by the application from the provided travel dataset. Confirm with vendors before booking.";
@@ -87,7 +90,7 @@ export function buildOption(profile: Profile, scenario: Scenario, venue: Venue, 
   const departureDate = addDays(req.gameDate, -nights);
   const departureTime =
     nights === 0
-      ? gameDayDepartureTime(gameTime, venue.driveHours, ds.policy.gameDayArrivalBufferHours)
+      ? gameDayDepartureTime(kickoffOnCampusClock(gameTime, venue), venue.driveHours, ds.policy.gameDayArrivalBufferHours)
       : req.earliestDepartureTime || ds.policy.defaultDepartureTime;
   const tripDays = nights + 1;
   const roundTripMiles = venue.distanceMiles * 2;
@@ -340,4 +343,9 @@ export function buildPlan(request: TripRequest, modifiers: WhatIfCommand[] = [],
     notes: scenario.notes,
     disclaimer: DISCLAIMER,
   };
+}
+
+/** The user enters kickoff in stadium-local time; departure math runs on the campus clock. */
+function kickoffOnCampusClock(gameTime: string, venue: Venue): string {
+  return fromMinutes(localToHome(toMinutes(gameTime), venueTimeZone(venue)));
 }
