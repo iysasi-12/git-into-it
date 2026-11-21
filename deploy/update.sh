@@ -35,7 +35,7 @@ as_app "npm ci --no-audit --no-fund && npm run build"
 echo "==> Restarting"
 systemctl restart "$SERVICE"
 for _ in $(seq 1 20); do
-  if curl -fsS -o /dev/null http://127.0.0.1:3001/api/opponents; then
+  if curl -fs -o /dev/null http://127.0.0.1:3001/api/opponents; then
     echo "OK: deployed $(as_app 'git log -1 --oneline')"
     exit 0
   fi
