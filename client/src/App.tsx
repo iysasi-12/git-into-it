@@ -3,7 +3,8 @@ import { MemoView } from "./components/MemoView";
 import { OptionCard } from "./components/OptionCard";
 import { RecommendationPanel } from "./components/RecommendationPanel";
 import { RequestPanel } from "./components/RequestPanel";
-import { Card, ErrorBanner, Spinner } from "./components/ui";
+import { PlanSkeleton, RecommendationSkeleton, WhatIfChatSkeleton } from "./components/Skeletons";
+import { Card, ErrorBanner } from "./components/ui";
 import { WhatIfChat } from "./components/WhatIfChat";
 import { usePlanner } from "./hooks/usePlanner";
 import { prettyDate } from "./lib/format";
@@ -29,7 +30,7 @@ export default function App() {
       <main className="no-print mx-auto grid max-w-7xl gap-6 px-4 py-6 lg:grid-cols-[380px_1fr]">
         <aside className="space-y-4">
           <RequestPanel planner={planner} />
-          {plan && <WhatIfChat planner={planner} />}
+          {plan ? <WhatIfChat planner={planner} /> : loading.plan && <WhatIfChatSkeleton />}
         </aside>
 
         <section className="space-y-4">
@@ -45,13 +46,7 @@ export default function App() {
             </Card>
           )}
 
-          {loading.plan && !plan && (
-            <Card>
-              <div className="flex items-center justify-center gap-3 py-16 text-stone-500">
-                <Spinner className="h-6 w-6" /> Calculating options…
-              </div>
-            </Card>
-          )}
+          {loading.plan && !plan && <PlanSkeleton />}
 
           {plan && (
             <div className={`space-y-4 transition-opacity ${loading.plan || loading.whatif ? "opacity-60" : ""}`}>
@@ -80,17 +75,7 @@ export default function App() {
                 ))}
               </div>
 
-              {recommendation ? (
-                <RecommendationPanel rec={recommendation} />
-              ) : (
-                loading.recommend && (
-                  <Card>
-                    <div className="flex items-center gap-3 py-4 text-sm text-stone-500">
-                      <Spinner className="h-5 w-5" /> Aivana is reviewing the options… this can take up to 30 seconds.
-                    </div>
-                  </Card>
-                )
-              )}
+              {recommendation ? <RecommendationPanel rec={recommendation} /> : loading.recommend && <RecommendationSkeleton />}
               <p className="text-center text-xs text-stone-400">{plan.disclaimer}</p>
             </div>
           )}
