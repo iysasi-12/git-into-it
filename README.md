@@ -29,6 +29,18 @@ Live Aivana is slow (recommend and memo can take 15–45 s), so keep the default
 - **What-if chat:** "Leave 3 players home", "Cap hotel budget at $7000". Each change is a chip you can undo.
 - **Travel memo:** itinerary, departure reminders, meal schedule and a cost table. Print it or use **Copy as text**. Dates are MM/DD/YYYY and times are 12-hour with a time zone (`1:30 PM ET`).
 
+## Aivana features used
+
+All calls go from the backend (`server/src/ai/`) to `POST /v1/generate`. The API key lives only in the server's `.env`.
+
+| Feature | Where | How |
+|---|---|---|
+| **Structured output** (native `response_format` JSON Schema) | Recommendation, travel memo | The zod schema is converted to JSON Schema and sent as `response_format`; Aivana returns a validated object. We validate it again with zod and scrub any number not in the facts. If Aivana refuses a schema, the call retries with the schema in the prompt only. |
+| **Structured JSON** (schema in the prompt) | Parse request, what-if command | These schemas use features `response_format` doesn't accept (`anyOf`, `pattern`), so the schema is embedded in the prompt. The reply is extracted, validated with zod, and repaired with one retry. |
+| **Multi-turn chat** (`messages`) | What-if chat | The last 6 chat turns are sent before the new message, so follow-ups like "Do the same for coaches" or "Actually make that cap $8000" work. A number in an assistant turn never counts as user-typed for the budget and occupancy guards. |
+
+Not used: streaming (Aivana's streaming endpoint doesn't support `response_format`, and we chose a validated memo; options appear instantly while the AI works), image input, and web search (deliberately off, so the model can't bring in prices or facts the app can't verify).
+
 ## Architecture
 
 ```
@@ -85,5 +97,16 @@ Venues can have an optional `timeZone` (`"ET"` or `"CT"`, default ET). Only Nort
 
 1. *Describe it* → "Use sample" → Extract details → Build travel options
 2. Point out the ★ recommendation and the tradeoffs, then click a cost to show the math
-3. What-ifs: "Leave 3 players home" → "Use one fewer bus" (rejected: not enough seats) → "Cap hotel budget at $7000" → "Upgrade hotel quality"
+3. What-ifs: "Leave 3 players home" → "Do the same for coaches" (multi-turn) → "Use one fewer bus" (rejected: not enough seats) → "Cap hotel budget at $7000" → "Upgrade hotel quality"
 4. Undo a chip, then Generate travel memo → Copy as text or Print
+
+## Known limits
+
+- **Sample data.** No data pack was provided, so prices, distances and hotels come from our own sample dataset (15 venues, fictional hotels, illustrative rates). Costs are estimates, not quotes, and there is no live hotel availability or real map routing.
+- **Headcounts, not a roster.** The planner works from player, coach and staff counts; there is no named roster, rooming list or restaurant list (meals use per-tier rates).
+- **Settings.** Seats per bus and meal allowances are fixed in the dataset and can't be edited in the UI. Players per room can be changed through the what-if chat ("put 3 players per room"); other occupancy values are fixed.
+- **Speed.** Live Aivana takes about 8–20 s for parse and what-if and 15–45 s for the recommendation and memo. The memo isn't streamed.
+- **One change per what-if message.** "Leave 3 players home and cap the hotel at $7000" applies only one of the two.
+- **Fallback detail.** If Aivana fails (rate limit, empty balance, timeout), the rules fallback answers and the UI shows "Rules fallback", but it doesn't say which error occurred.
+- **Time zones.** Venues are ET or CT only, and kickoffs after 11 PM Central aren't handled.
+- **No saved trips.** The server is stateless; reloading the page starts over.

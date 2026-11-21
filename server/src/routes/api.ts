@@ -69,9 +69,9 @@ api.post(
 api.post(
   "/whatif",
   asyncHandler(async (req, res) => {
-    const { request, modifiers, message } = validate(WhatIfBody, req.body);
+    const { request, modifiers, message, history } = validate(WhatIfBody, req.body);
     const current = buildPlan(request, modifiers);
-    const { command, source } = await interpretWhatIf(message, current);
+    const { command, source } = await interpretWhatIf(message, current, history);
 
     // The engine keeps what is feasible and warns about the rest, so a supported command can
     // still change nothing (e.g. one fewer bus when every seat is needed). Don't call that applied.

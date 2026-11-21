@@ -6,8 +6,10 @@ import {
   WhatIfCommandSchema,
 } from "./schemas.js";
 
-// ALL Aivana prompts live here. Aivana's API takes a single `prompt` string,
-// so each prompt = shared rules + task + JSON schema + input.
+// ALL Aivana prompts live here. Each prompt = shared rules + task + JSON schema + input.
+// The schema stays in the prompt even when it is also sent as Aivana's native
+// response_format (recommend, memo), so the prompt-only retry still works.
+// The what-if prompt is the last user turn of a multi-turn `messages` request.
 
 const RULES = `You are the AI assistant inside an athletic-department away-game travel planner.
 HARD RULES (never break these):
@@ -76,7 +78,8 @@ Actions:
 - set_departure: "departure" = game_day | day_before | two_days_before. If the user names a weekday ("leave Thursday"), pick the choice whose day in CURRENT_PLAN.departureWeekdays matches it. Only a weekday not listed there is "unsupported".
 - unsupported: anything else; explain briefly in "explanation".
 "explanation": one short sentence restating the change in plain English.
-Use null for fields that do not apply.`,
+Use null for fields that do not apply.
+Earlier messages in this conversation (if any) are the user's previous what-ifs and the app's replies. Use them only to understand references in USER_MESSAGE, such as "do the same for coaches" or "make it the upscale one instead". CURRENT_PLAN already includes every change that was applied; return only the NEW change USER_MESSAGE asks for.`,
       jsonSchemaText(WhatIfCommandSchema),
       { USER_MESSAGE: message, CURRENT_PLAN: context },
     );

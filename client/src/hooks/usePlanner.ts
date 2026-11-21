@@ -108,7 +108,9 @@ export function usePlanner() {
     run("whatif", async () => {
       setChat((c) => [...c, { role: "user", text: message }]);
       try {
-        const r = await api.whatIf({ request: baseRequest, modifiers, message });
+        // Earlier turns (not error replies) give Aivana the conversation for follow-ups.
+        const history = chat.filter((m) => m.role === "user" || m.source).slice(-6).map(({ role, text }) => ({ role, text }));
+        const r = await api.whatIf({ request: baseRequest, modifiers, message, history });
         setPreviousPlan(plan);
         setPlan(r.plan);
         setModifiers(r.modifiers);
