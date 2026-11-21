@@ -253,7 +253,7 @@ D1–D5 are done. Nice work! The app's features are basically finished. The bigg
 
 **One rule for all of Phase 2:** don't edit `prompts.ts`, `schemas.ts`, `aiService.ts` or `aivanaClient.ts` in `server/src/ai/`. The lead is changing them. You may *import* from them, and if you think one needs a change, tell the lead.
 
-Do them in order: D6 → D7 → D8, and D9 if there's time.
+Do them in order: D6 → D7 → D8. (D9 has moved to Oliver; its spec stays below.)
 
 ---
 
@@ -354,7 +354,7 @@ Do them in order: D6 → D7 → D8, and D9 if there's time.
 
 ---
 
-## D9. Stretch: show how long the AI has been thinking (your first frontend task)
+## D9. Stretch: show how long the AI has been thinking (Oliver's task)
 
 **Why:** Live Aivana calls take 15–35 seconds. During that wait, a still spinner looks like a crash to a judge. A counter like *"Aivana is thinking… 12s"* shows the app is working.
 

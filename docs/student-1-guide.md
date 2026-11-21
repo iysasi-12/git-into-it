@@ -1,6 +1,6 @@
 # Student 1 Guide: Frontend
 
-> **Status (2026-11-21):** F1 and F2 were done by Oliver, who has since left the team. The lead did F3. F4 is cut, and F5 is optional for the lead. If you're picking up frontend work now, start with **D9** (AI wait counter) in `docs/student-2-guide.md`.
+> **Status (2026-11-21):** Oliver did F1 and F2, left the team, and rejoined the same day. While he was away the lead did F3 (mobile) and F4 (skeletons). Oliver is finishing **F5** in PR #19. After F5, do **D9** (AI wait counter); its spec is in `docs/student-2-guide.md`.
 
 Welcome! You own **what the judges see.** Judges spend about three minutes on our project, and most of that time they're looking at the screen. A clear chart and instant feedback after a what-if can win the room.
 
