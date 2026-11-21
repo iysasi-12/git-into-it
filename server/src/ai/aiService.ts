@@ -177,5 +177,16 @@ export async function writeMemo(plan: PlanResult, option: TravelOption): Promise
   );
   const guardNotes: string[] = [];
   const clean = scrubDeep(value, allowedNumbers(facts), guardNotes);
-  return { ...clean, source, guardNotes };
+  // Days and times always come from the engine's timeline, whatever format the AI used.
+  // The AI only contributes the activity wording (when it returned one entry per event).
+  const itinerary = facts.timeline.map((e, i) => ({
+    day: e.day,
+    time: e.displayTime,
+    activity: clean.itinerary.length === facts.timeline.length ? clean.itinerary[i].activity : e.event,
+  }));
+  const mealSchedule =
+    clean.mealSchedule.length === facts.meals.length
+      ? clean.mealSchedule.map((m, i) => ({ ...m, day: facts.meals[i].day }))
+      : clean.mealSchedule;
+  return { ...clean, itinerary, mealSchedule, source, guardNotes };
 }

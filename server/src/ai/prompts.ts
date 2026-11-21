@@ -85,11 +85,11 @@ Use null for fields that do not apply.`,
   memo(facts: unknown) {
     return build(
       `Write a travel memo for the chosen option, for coaches, staff, and the travel coordinator.
-- "title": short memo title naming the opponent and game date.
+- "title": short memo title naming the opponent and game date (write the date as INPUT.gameDateDisplay).
 - "summary": 3-5 sentences: who is traveling, how, where they stay, and the estimated total cost (use chosenOption.totalCost exactly; call it an estimate).
-- "itinerary": one entry per INPUT.timeline event, in order. "day" = weekday + date, "time" = the timeline time exactly, "activity" = a clear rewrite of the event. Do not add events with new times.
-- "departureReminders": 4-6 practical reminders (report time, bag/equipment loading, IDs, weather check, special requests). Only use times from the timeline.
-- "mealSchedule": one entry per INPUT.meals item; "note" is a short helpful note (no prices).`,
+- "itinerary": one entry per INPUT.timeline event, in order. "day" = the event's "day" exactly, "time" = the event's "displayTime" exactly, "activity" = a clear rewrite of the event. Do not add events with new times.
+- "departureReminders": 4-6 practical reminders (report time, bag/equipment loading, IDs, weather check, special requests). Only use times from the timeline, written as their "displayTime" (e.g. "1:30 PM ET", never "13:30").
+- "mealSchedule": one entry per INPUT.meals item; "day" = the meal's "day" exactly; "note" is a short helpful note (no prices).`,
       jsonSchemaText(MemoSchema),
       facts,
     );
