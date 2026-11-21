@@ -1,10 +1,8 @@
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import type { TravelOption } from "@app/shared";
 import { DEPARTURE_LABELS, money, money2, prettyDate, prettyTime } from "../lib/format";
-import { MathDialog, type MathTarget } from "./MathDialog";
+import { showsMath, useMathDialog } from "./MathDialog";
 import { Button, useElapsedSeconds, } from "./ui";
-
-const showsMath = "cursor-pointer underline decoration-stone-300 decoration-dotted underline-offset-4 hover:decoration-brand";
 
 interface Props {
   option: TravelOption;
@@ -24,8 +22,7 @@ export function OptionCard({
   memoLoading,
 }: Props) {
   const [open, setOpen] = useState(false);
-  const [math, setMath] = useState<MathTarget | null>(null);
-  const closeMath = useCallback(() => setMath(null), []);
+  const { showMath, mathDialog } = useMathDialog();
   const memoSeconds = useElapsedSeconds(memoLoading);
   const delta = o.totalCost - cheapest;
   const costChange = previousOption ? o.totalCost - previousOption.totalCost : 0;
@@ -48,7 +45,7 @@ export function OptionCard({
       <div className="mb-3">
         <div className="flex items-center gap-2">
   <button
-    onClick={() => setMath({ kind: "total" })}
+    onClick={() => showMath(o)}
     className={`text-3xl font-extrabold text-ink ${showsMath}`}
     title="Show the math"
   >
@@ -69,7 +66,7 @@ export function OptionCard({
 </div>
         <p className="text-xs text-stone-500">
           Estimate ·{" "}
-          <button onClick={() => setMath({ kind: "total" })} className={showsMath} title="Show the math">
+          <button onClick={() => showMath(o)} className={showsMath} title="Show the math">
             {money(o.costPerTraveler)} per traveler
           </button>
           {delta > 0 && <span className="text-stone-400"> · +{money(delta)} vs lowest</span>}
@@ -126,7 +123,7 @@ export function OptionCard({
             {o.lineItems.map((li, i) => (
               <tr
                 key={i}
-                onClick={() => setMath({ kind: "item", index: i })}
+                onClick={() => showMath(o, { kind: "item", index: i })}
                 className="cursor-pointer border-t border-stone-100 hover:bg-stone-50"
               >
                 <td className="py-1 pr-2">
@@ -140,14 +137,14 @@ export function OptionCard({
                 <td className="py-1 text-right font-medium whitespace-nowrap">{money(li.total)}</td>
               </tr>
             ))}
-            <tr onClick={() => setMath({ kind: "total" })} className="cursor-pointer border-t-2 border-stone-200 font-bold hover:bg-stone-50">
+            <tr onClick={() => showMath(o)} className="cursor-pointer border-t-2 border-stone-200 font-bold hover:bg-stone-50">
               <td className="py-1">Total (estimate)</td>
               <td className="py-1 text-right">{money(o.totalCost)}</td>
             </tr>
           </tbody>
         </table>
       )}
-      {math && <MathDialog option={o} target={math} onTarget={setMath} onClose={closeMath} />}
+      {mathDialog}
 
       <Button
   variant={recommended ? "primary" : "secondary"}

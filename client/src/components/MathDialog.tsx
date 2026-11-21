@@ -1,9 +1,33 @@
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { CalcFactor, LineItem, TravelOption } from "@app/shared";
 import { exact } from "../lib/format";
 
 /** What the dialog explains: the option total or one line item. */
 export type MathTarget = { kind: "total" } | { kind: "item"; index: number };
+
+/** Underline style for any number that opens the math. */
+export const showsMath = "cursor-pointer underline decoration-stone-300 decoration-dotted underline-offset-4 hover:decoration-brand";
+
+/**
+ * One math dialog per component: `showMath(option, target)` opens it, render `mathDialog` anywhere.
+ */
+export function useMathDialog() {
+  const [state, setState] = useState<{ option: TravelOption; target: MathTarget } | null>(null);
+  const showMath = useCallback(
+    (option: TravelOption, target: MathTarget = { kind: "total" }) => setState({ option, target }),
+    [],
+  );
+  const close = useCallback(() => setState(null), []);
+  const mathDialog = state && (
+    <MathDialog
+      option={state.option}
+      target={state.target}
+      onTarget={(target) => setState({ option: state.option, target })}
+      onClose={close}
+    />
+  );
+  return { showMath, mathDialog };
+}
 
 // Display only: every number and sentence here comes from the server's line items.
 function factorText(f: CalcFactor) {
@@ -101,7 +125,11 @@ export function MathDialog({
       ref={ref}
       aria-label={title}
       // A click on the backdrop lands on the <dialog> itself; clicks inside land on the panel.
-      onClick={(e) => e.target === ref.current && ref.current.close()}
+      // Stop propagation so a parent with its own click-to-close (the memo overlay) stays open.
+      onClick={(e) => {
+        e.stopPropagation();
+        if (e.target === ref.current) ref.current.close();
+      }}
       className="no-print m-auto w-[calc(100%-2rem)] max-w-lg rounded-xl bg-white text-stone-800 shadow-xl backdrop:bg-black/40"
     >
       <div className="max-h-[85vh] overflow-y-auto p-5">

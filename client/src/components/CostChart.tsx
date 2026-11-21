@@ -1,5 +1,6 @@
 import type { LineItem, TravelOption } from "@app/shared";
 import { money } from "../lib/format";
+import { showsMath, useMathDialog } from "./MathDialog";
 import { Card } from "./ui";
 
 type Category = LineItem["category"];
@@ -20,6 +21,7 @@ function sumCategory(option: TravelOption, category: Category): number {
 export function CostChart({ options }: { options: TravelOption[] }) {
   // The most expensive option's bar is 100% wide; the others are scaled to it.
   const max = Math.max(...options.map((o) => o.totalCost));
+  const { showMath, mathDialog } = useMathDialog();
 
   return (
     <Card title="Where the money goes (estimates)">
@@ -39,7 +41,11 @@ export function CostChart({ options }: { options: TravelOption[] }) {
               );
             })}
           </div>
-          <span className="w-20 shrink-0 text-right">{money(o.totalCost)}</span>
+          <span className="w-20 shrink-0 text-right">
+            <button onClick={() => showMath(o)} className={showsMath} title="Show the math">
+              {money(o.totalCost)}
+            </button>
+          </span>
         </div>
       ))}
       <div className="mt-3 flex flex-wrap gap-4 text-xs text-stone-500">
@@ -50,6 +56,7 @@ export function CostChart({ options }: { options: TravelOption[] }) {
           </span>
         ))}
       </div>
+      {mathDialog}
     </Card>
   );
 }

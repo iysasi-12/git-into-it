@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import type { MemoResponse } from "@app/shared";
 import { money, money2 } from "../lib/format";
+import { useMathDialog } from "./MathDialog";
 import { Button, SourceBadge } from "./ui";
 
 export function MemoView({ data, onClose }: { data: MemoResponse; onClose: () => void }) {
   const { memo, option, plan } = data;
   const [copyState, setCopyState] = useState<"idle" | "copied" | "failed">("idle");
+  const { showMath, mathDialog } = useMathDialog();
   const resetTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   // Stop a pending label reset if the memo closes within 2 s.
   useEffect(() => () => clearTimeout(resetTimer.current), []);
@@ -96,9 +98,14 @@ export function MemoView({ data, onClose }: { data: MemoResponse; onClose: () =>
           <table className="w-full text-sm">
             <tbody>
               {option.lineItems.map((li, i) => (
-                <tr key={i} className="border-t border-stone-100">
+                <tr
+                  key={i}
+                  onClick={() => showMath(option, { kind: "item", index: i })}
+                  className="cursor-pointer border-t border-stone-100 hover:bg-stone-50"
+                  title="Show the math"
+                >
                   <td className="py-1 pr-2">
-                    {li.label}
+                    <button className="text-left">{li.label}</button>
                     <span className="text-stone-400">
                       {" "}
                       · {li.quantity.toLocaleString()} {li.unit} × {money2(li.unitCost)}
@@ -107,12 +114,18 @@ export function MemoView({ data, onClose }: { data: MemoResponse; onClose: () =>
                   <td className="py-1 text-right whitespace-nowrap">{money(li.total)}</td>
                 </tr>
               ))}
-              <tr className="border-t-2 border-stone-300 font-bold">
+              <tr
+                onClick={() => showMath(option)}
+                className="cursor-pointer border-t-2 border-stone-300 font-bold hover:bg-stone-50"
+                title="Show the math"
+              >
                 <td className="py-1">Total estimate</td>
                 <td className="py-1 text-right">{money(option.totalCost)}</td>
               </tr>
             </tbody>
           </table>
+          <p className="no-print mt-1 text-xs text-stone-400">Click any cost to see how it was calculated.</p>
+          {mathDialog}
         </Section>
 
         {memo.guardNotes.length > 0 && <p className="mb-2 text-xs text-stone-400">🛡 {memo.guardNotes.length} unverified figure(s) removed from AI text.</p>}
