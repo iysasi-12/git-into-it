@@ -39,7 +39,9 @@ client (React+TS+Tailwind v4, Vite) --/api--> server/src/routes/api.ts
 - Student 2's tasks are learning tasks. **Do not implement them unless the lead explicitly asks.** When reviewing their work, explain and point the way; don't rewrite it.
 
 ## Current status / gotchas
-- MVP complete and working in mock mode. Not yet tested against live Aivana.
+- **Tested against live Aivana on 2026-11-21:** the full README demo script ran in a browser with every AI call answered by Aivana (12/12, no "Rules fallback"). That needs the timeouts at 30 s / 60 s (the defaults now; a local `.env` with `AIVANA_TIMEOUT_MS=20000` overrides them and causes fallbacks).
+- Live Aivana is slow: parse ~8 s, what-if 8–20 s, recommend 34–43 s, memo 26–32 s. So `/plan` and `/whatif` return options instantly and the client loads `/recommend` in the background. Mock mode stays the offline demo backup.
+- Live Aivana drops underscores from enum values (`daybefore`); `canonicalEnum` in `guards.ts` repairs them before zod validation. Keep it.
 - There is **no official dataset**. `server/data/*.json` is our own sample dataset and is the source of truth: approximate distances, fictional hotels, illustrative rates. When adding data, keep it plausible and never let the AI fill in gaps.
 - **Dataset frozen (2026-11-21):** 15 venues (all MAC opponents plus Ohio State, Michigan, Penn State), 3+ hotels each. Only add entries; never change existing values. Check with `npm -w server run validate-data`.
 - Venue matching (`matchVenue`) prefers the longest matching alias ("Central Michigan" beats Michigan's "michigan"). Don't add a bare `"ohio"` alias: "Bowling Green, Ohio" would match Ohio University.
