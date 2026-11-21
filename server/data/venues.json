@@ -1,0 +1,14 @@
+{
+  "_meta": "PLACEHOLDER SAMPLE DATA — replace with the official hackathon dataset. Distances are one-way from Bowling Green, OH.",
+  "origin": { "name": "Bowling Green State University", "city": "Bowling Green", "state": "OH" },
+  "venues": [
+    { "id": "ohio-state", "school": "Ohio State University", "mascot": "Buckeyes", "stadium": "Ohio Stadium", "city": "Columbus", "state": "OH", "distanceMiles": 125, "driveHours": 2.1, "aliases": ["ohio state", "osu", "buckeyes", "columbus"] },
+    { "id": "michigan", "school": "University of Michigan", "mascot": "Wolverines", "stadium": "Michigan Stadium", "city": "Ann Arbor", "state": "MI", "distanceMiles": 70, "driveHours": 1.2, "aliases": ["michigan", "umich", "wolverines", "ann arbor"] },
+    { "id": "kent-state", "school": "Kent State University", "mascot": "Golden Flashes", "stadium": "Dix Stadium", "city": "Kent", "state": "OH", "distanceMiles": 140, "driveHours": 2.3, "aliases": ["kent state", "kent", "golden flashes"] },
+    { "id": "miami-oh", "school": "Miami University", "mascot": "RedHawks", "stadium": "Yager Stadium", "city": "Oxford", "state": "OH", "distanceMiles": 170, "driveHours": 3.0, "aliases": ["miami", "miami (oh)", "miami ohio", "redhawks", "oxford"] },
+    { "id": "ball-state", "school": "Ball State University", "mascot": "Cardinals", "stadium": "Scheumann Stadium", "city": "Muncie", "state": "IN", "distanceMiles": 165, "driveHours": 2.8, "aliases": ["ball state", "cardinals", "muncie"] },
+    { "id": "western-michigan", "school": "Western Michigan University", "mascot": "Broncos", "stadium": "Waldo Stadium", "city": "Kalamazoo", "state": "MI", "distanceMiles": 165, "driveHours": 2.7, "aliases": ["western michigan", "wmu", "broncos", "kalamazoo"] },
+    { "id": "buffalo", "school": "University at Buffalo", "mascot": "Bulls", "stadium": "UB Stadium", "city": "Buffalo", "state": "NY", "distanceMiles": 300, "driveHours": 4.7, "aliases": ["buffalo", "ub", "bulls"] },
+    { "id": "penn-state", "school": "Penn State University", "mascot": "Nittany Lions", "stadium": "Beaver Stadium", "city": "State College", "state": "PA", "distanceMiles": 335, "driveHours": 5.3, "aliases": ["penn state", "psu", "nittany lions", "state college"] }
+  ]
+}

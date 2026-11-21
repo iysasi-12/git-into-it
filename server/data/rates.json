@@ -1,0 +1,19 @@
+{
+  "_meta": "PLACEHOLDER SAMPLE DATA — replace with the official hackathon dataset. All costs are estimates.",
+  "busTypes": [
+    { "id": "standard-coach", "name": "Standard Motorcoach", "capacity": 56, "dailyRate": 1100, "perMileRate": 3.25, "amenities": ["Restroom", "Reclining seats"] },
+    { "id": "premium-coach", "name": "Premium Team Coach", "capacity": 50, "dailyRate": 1450, "perMileRate": 3.75, "amenities": ["Restroom", "Extra legroom", "Wi-Fi", "Power outlets"] }
+  ],
+  "mealRates": {
+    "economy": { "breakfast": 12, "lunch": 15, "dinner": 22 },
+    "standard": { "breakfast": 15, "lunch": 20, "dinner": 30 },
+    "premium": { "breakfast": 20, "lunch": 28, "dinner": 45 }
+  },
+  "policy": {
+    "maxSameDayDriveHours": 3,
+    "driverRoomsRequired": true,
+    "gameDayArrivalBufferHours": 3,
+    "defaultGameTime": "15:30",
+    "defaultDepartureTime": "14:00"
+  }
+}

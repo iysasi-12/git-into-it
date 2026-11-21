@@ -1,0 +1,37 @@
+{
+  "_meta": "PLACEHOLDER SAMPLE DATA — replace with the official hackathon dataset. Hotel names are generic samples.",
+  "hotels": [
+    { "id": "osu-econ-1", "venueId": "ohio-state", "name": "Columbus Northside Value Inn", "tier": "economy", "nightlyRate": 129, "roomsAvailable": 30, "distanceToStadiumMiles": 6.5 },
+    { "id": "osu-econ-2", "venueId": "ohio-state", "name": "Columbus Airport Budget Suites", "tier": "economy", "nightlyRate": 139, "roomsAvailable": 60, "distanceToStadiumMiles": 9.0 },
+    { "id": "osu-mid-1", "venueId": "ohio-state", "name": "Columbus Riverside Hotel", "tier": "midscale", "nightlyRate": 179, "roomsAvailable": 55, "distanceToStadiumMiles": 3.2 },
+    { "id": "osu-up-1", "venueId": "ohio-state", "name": "Columbus Campus Grand Hotel", "tier": "upscale", "nightlyRate": 259, "roomsAvailable": 70, "distanceToStadiumMiles": 1.1 },
+
+    { "id": "um-econ-1", "venueId": "michigan", "name": "Ann Arbor Value Inn", "tier": "economy", "nightlyRate": 135, "roomsAvailable": 50, "distanceToStadiumMiles": 5.0 },
+    { "id": "um-mid-1", "venueId": "michigan", "name": "Ann Arbor Conference Hotel", "tier": "midscale", "nightlyRate": 189, "roomsAvailable": 60, "distanceToStadiumMiles": 2.8 },
+    { "id": "um-up-1", "venueId": "michigan", "name": "Ann Arbor Campus Grand Hotel", "tier": "upscale", "nightlyRate": 279, "roomsAvailable": 65, "distanceToStadiumMiles": 0.9 },
+
+    { "id": "kent-econ-1", "venueId": "kent-state", "name": "Kent Value Inn", "tier": "economy", "nightlyRate": 109, "roomsAvailable": 55, "distanceToStadiumMiles": 4.2 },
+    { "id": "kent-mid-1", "venueId": "kent-state", "name": "Kent Downtown Hotel", "tier": "midscale", "nightlyRate": 149, "roomsAvailable": 50, "distanceToStadiumMiles": 1.5 },
+    { "id": "kent-up-1", "venueId": "kent-state", "name": "Akron Grand Hotel", "tier": "upscale", "nightlyRate": 219, "roomsAvailable": 60, "distanceToStadiumMiles": 12.0 },
+
+    { "id": "miami-econ-1", "venueId": "miami-oh", "name": "Oxford Value Inn", "tier": "economy", "nightlyRate": 115, "roomsAvailable": 50, "distanceToStadiumMiles": 3.0 },
+    { "id": "miami-mid-1", "venueId": "miami-oh", "name": "Oxford Courtyard Hotel", "tier": "midscale", "nightlyRate": 165, "roomsAvailable": 55, "distanceToStadiumMiles": 1.4 },
+    { "id": "miami-up-1", "venueId": "miami-oh", "name": "Cincinnati North Grand Hotel", "tier": "upscale", "nightlyRate": 235, "roomsAvailable": 70, "distanceToStadiumMiles": 22.0 },
+
+    { "id": "ball-econ-1", "venueId": "ball-state", "name": "Muncie Value Inn", "tier": "economy", "nightlyRate": 105, "roomsAvailable": 55, "distanceToStadiumMiles": 4.5 },
+    { "id": "ball-mid-1", "venueId": "ball-state", "name": "Muncie Conference Hotel", "tier": "midscale", "nightlyRate": 155, "roomsAvailable": 50, "distanceToStadiumMiles": 2.0 },
+    { "id": "ball-up-1", "venueId": "ball-state", "name": "Muncie Grand Hotel", "tier": "upscale", "nightlyRate": 215, "roomsAvailable": 60, "distanceToStadiumMiles": 1.2 },
+
+    { "id": "wmu-econ-1", "venueId": "western-michigan", "name": "Kalamazoo Value Inn", "tier": "economy", "nightlyRate": 112, "roomsAvailable": 55, "distanceToStadiumMiles": 5.1 },
+    { "id": "wmu-mid-1", "venueId": "western-michigan", "name": "Kalamazoo Riverside Hotel", "tier": "midscale", "nightlyRate": 159, "roomsAvailable": 55, "distanceToStadiumMiles": 2.3 },
+    { "id": "wmu-up-1", "venueId": "western-michigan", "name": "Kalamazoo Grand Hotel", "tier": "upscale", "nightlyRate": 229, "roomsAvailable": 60, "distanceToStadiumMiles": 1.0 },
+
+    { "id": "ub-econ-1", "venueId": "buffalo", "name": "Amherst Value Inn", "tier": "economy", "nightlyRate": 119, "roomsAvailable": 50, "distanceToStadiumMiles": 4.0 },
+    { "id": "ub-mid-1", "venueId": "buffalo", "name": "Amherst Conference Hotel", "tier": "midscale", "nightlyRate": 169, "roomsAvailable": 55, "distanceToStadiumMiles": 2.2 },
+    { "id": "ub-up-1", "venueId": "buffalo", "name": "Buffalo Waterfront Grand Hotel", "tier": "upscale", "nightlyRate": 245, "roomsAvailable": 65, "distanceToStadiumMiles": 11.0 },
+
+    { "id": "psu-econ-1", "venueId": "penn-state", "name": "State College Value Inn", "tier": "economy", "nightlyRate": 149, "roomsAvailable": 45, "distanceToStadiumMiles": 5.5 },
+    { "id": "psu-mid-1", "venueId": "penn-state", "name": "State College Conference Hotel", "tier": "midscale", "nightlyRate": 209, "roomsAvailable": 55, "distanceToStadiumMiles": 2.5 },
+    { "id": "psu-up-1", "venueId": "penn-state", "name": "State College Campus Grand Hotel", "tier": "upscale", "nightlyRate": 299, "roomsAvailable": 60, "distanceToStadiumMiles": 0.8 }
+  ]
+}
