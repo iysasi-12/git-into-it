@@ -33,6 +33,16 @@ describe("what-if heuristics", () => {
     ["Use one fewer bus", { action: "adjust_buses", amount: -1 }],
     ["Upgrade hotel quality", { action: "shift_hotel_tier", amount: 1 }],
     ["Bring 2 more coaches", { action: "adjust_coaches", amount: 2 }],
+    ["Drop 5 guys from the roster", { action: "adjust_players", amount: -5 }],
+    ["Lose two assistant coaches", { action: "adjust_coaches", amount: -2 }],
+    ["What if we add a trainer", { action: "adjust_staff", amount: 1 }],
+    ["Add an equipment manager", { action: "adjust_staff", amount: 1 }],
+    ["We can only spend 6k on hotels", { action: "set_hotel_budget_cap", amount: 6000 }],
+    ["Send 4 players home", { action: "adjust_players", amount: -4 }],
+    ["Take two fewer staff", { action: "adjust_staff", amount: -2 }],
+    ["Add one more bus", { action: "adjust_buses", amount: 1 }],
+    ["Switch to a cheaper hotel", { action: "shift_hotel_tier", amount: -1 }],
+    ["Let's leave Thursday instead", { action: "set_departure", departure: "two_days_before" }],
   ])("%s", (msg, expected) => {
     expect(heuristicWhatIf(msg)).toMatchObject(expected);
   });

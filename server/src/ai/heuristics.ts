@@ -73,30 +73,30 @@ export function heuristicParse(text: string, today: string, opponentName: string
 
 export function heuristicWhatIf(message: string): WhatIfCommand {
   const t = message.toLowerCase();
-  const group = (noun: string) => {
-    const minus = t.match(new RegExp(`(?:leave|drop|cut|remove|minus|fewer|less|without)\\s+${NUM_WORD}\\s+(?:more\\s+)?${noun}`));
+    const group = (noun: string) => {
+    const adj = "(?:(?:more|extra|assistant)\\s+)*";
+    const minus = t.match(new RegExp(`(?:leave|drop|cut|remove|minus|fewer|less|without|lose|send)\\s+${NUM_WORD}\\s+${adj}${noun}`));
     if (minus) return -num(minus[1]);
     const minus2 = t.match(new RegExp(`${NUM_WORD}\\s+(?:fewer|less)\\s+${noun}`));
     if (minus2) return -num(minus2[1]);
-    const plus = t.match(new RegExp(`(?:add|bring|plus|extra|another)\\s+${NUM_WORD}?\\s*(?:more\\s+|extra\\s+)?${noun}`));
+    const plus = t.match(new RegExp(`(?:add|bring|plus|extra|another)\\s+${NUM_WORD}?\\s*${adj}${noun}`));
     if (plus) return plus[1] ? num(plus[1]) : 1;
     const plus2 = t.match(new RegExp(`${NUM_WORD}\\s+(?:more|extra)\\s+${noun}`));
     if (plus2) return num(plus2[1]);
     return null;
   };
 
-  const p = group("players?");
+   const p = group("(?:players?|guys|athletes|kids)");
   if (p) return { action: "adjust_players", amount: p, explanation: `${p < 0 ? "Remove" : "Add"} ${Math.abs(p)} player(s).` };
   const c = group("coach(?:es)?");
   if (c) return { action: "adjust_coaches", amount: c, explanation: `${c < 0 ? "Remove" : "Add"} ${Math.abs(c)} coach(es).` };
-  const s = group("staff(?: members?)?");
-  if (s) return { action: "adjust_staff", amount: s, explanation: `${s < 0 ? "Remove" : "Add"} ${Math.abs(s)} staff.` };
+  const s = group("(?:staff(?: members?)?|trainers?|(?:equipment )?managers?)");  if (s) return { action: "adjust_staff", amount: s, explanation: `${s < 0 ? "Remove" : "Add"} ${Math.abs(s)} staff.` };
   const b = group("bus(?:es)?");
   if (b) return { action: "adjust_buses", amount: b, explanation: `${b < 0 ? "Use" : "Add"} ${Math.abs(b)} ${b < 0 ? "fewer" : "more"} bus(es).` };
 
+  
   const cap = t.match(/\$?\s*(\d[\d,]*(?:\.\d+)?)\s*(k)?\b/);
-  if (/(cap|limit|budget|max|under)/.test(t) && /hotel|lodging|room/.test(t) && cap) {
-    const amount = Number(cap[1].replace(/,/g, "")) * (cap[2] ? 1000 : 1);
+  if (/(cap|limit|budget|max|under|spend|only|at most|no more than|afford)/.test(t) && /hotel|lodging|room/.test(t) && cap) {    const amount = Number(cap[1].replace(/,/g, "")) * (cap[2] ? 1000 : 1);
     return { action: "set_hotel_budget_cap", amount, explanation: `Cap total hotel spend at $${amount.toLocaleString()}.` };
   }
   const tier = t.match(/\b(economy|budget|midscale|mid-range|upscale|luxury)\b/);
