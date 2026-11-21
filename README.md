@@ -41,9 +41,11 @@ client (React)  ──/api──▶  routes ──▶ engine/  (pure calculation
 | `POST /api/whatif` | chat → command (Aivana) → recalculated plan |
 | `POST /api/memo` | chosen option → memo (Aivana) |
 
-## Swapping in the official dataset
+## About the dataset
 
-Placeholder data lives in `server/data/*.json`. Replace those files and adapt only the mapping in `server/src/data/dataRepository.ts` → `loadDataset()`. Then update the hand-computed expectations in `server/src/engine/engine.test.ts`.
+No official dataset was provided, so the team built a sample one in `server/data/*.json`: away venues with approximate distances from Bowling Green, fictional hotels in three tiers, bus types, meal rates and travel policy. Every price is an illustrative estimate, and the app labels costs that way. It is still the **only** source of numbers: the engine calculates from it, and the AI never adds figures of its own.
+
+To change the data, edit those JSON files, then re-derive the hand-computed expectations in `server/src/engine/engine.test.ts`. Only `loadDataset()` in `server/src/data/dataRepository.ts` knows the file layout.
 
 ## Calculation rules (`server/src/engine`)
 

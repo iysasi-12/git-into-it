@@ -1,5 +1,5 @@
 {
-  "_meta": "PLACEHOLDER SAMPLE DATA — replace with the official hackathon dataset. Hotel names are generic samples.",
+  "_meta": "Team-built sample dataset (no official dataset was provided). Hotel names are fictional; rates and availability are illustrative estimates.",
   "hotels": [
     { "id": "osu-econ-1", "venueId": "ohio-state", "name": "Columbus Northside Value Inn", "tier": "economy", "nightlyRate": 129, "roomsAvailable": 30, "distanceToStadiumMiles": 6.5 },
     { "id": "osu-econ-2", "venueId": "ohio-state", "name": "Columbus Airport Budget Suites", "tier": "economy", "nightlyRate": 139, "roomsAvailable": 60, "distanceToStadiumMiles": 9.0 },

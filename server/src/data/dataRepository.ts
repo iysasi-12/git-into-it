@@ -3,8 +3,8 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { BusType, Dataset, Hotel, HotelTier, Venue } from "@app/shared";
 
-// The ONLY place that knows the on-disk dataset format. When the official
-// dataset arrives, adapt the mapping in `loadDataset` — nothing else changes.
+// The ONLY place that knows the on-disk dataset format. If the JSON layout
+// ever changes, adapt the mapping in `loadDataset` — nothing else changes.
 
 const DATA_DIR = resolve(dirname(fileURLToPath(import.meta.url)), "../../data");
 
