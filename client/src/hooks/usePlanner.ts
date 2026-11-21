@@ -37,6 +37,7 @@ export function usePlanner() {
   const [baseRequest, setBaseRequest] = useState<TripRequest | null>(null);
   const [modifiers, setModifiers] = useState<WhatIfCommand[]>([]);
   const [plan, setPlan] = useState<PlanResult | null>(null);
+  const [previousPlan, setPreviousPlan] = useState<PlanResult | null>(null);
   const [recommendation, setRecommendation] = useState<Recommendation | null>(null);
   const [chat, setChat] = useState<ChatMessage[]>([]);
   const [memo, setMemo] = useState<MemoResponse | null>(null);
@@ -79,6 +80,7 @@ export function usePlanner() {
 
   const generatePlan = async (request: TripRequest) => {
     setBaseRequest(request);
+    setPreviousPlan(null); // new trip: don't compare against the old one
     setChat([]);
     setMemo(null);
     await replan(request, []);
@@ -90,6 +92,7 @@ export function usePlanner() {
       setChat((c) => [...c, { role: "user", text: message }]);
       try {
         const r = await api.whatIf({ request: baseRequest, modifiers, message });
+        setPreviousPlan(plan);
         setPlan(r.plan);
         setRecommendation(r.recommendation);
         setModifiers(r.modifiers);
@@ -103,6 +106,7 @@ export function usePlanner() {
 
   const removeModifier = (index: number) => {
     if (!baseRequest) return;
+    setPreviousPlan(plan);
     void replan(baseRequest, modifiers.filter((_, i) => i !== index));
   };
 
@@ -119,6 +123,7 @@ export function usePlanner() {
     setDraft,
     missingFields,
     plan,
+    previousPlan,
     recommendation,
     modifiers,
     chat,

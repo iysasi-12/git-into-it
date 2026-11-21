@@ -1,3 +1,4 @@
+import { CostChart } from "./components/CostChart";
 import { MemoView } from "./components/MemoView";
 import { OptionCard } from "./components/OptionCard";
 import { RecommendationPanel } from "./components/RecommendationPanel";
@@ -9,7 +10,7 @@ import { prettyDate } from "./lib/format";
 
 export default function App() {
   const planner = usePlanner();
-  const { plan, recommendation, memo, loading } = planner;
+  const { plan, previousPlan, recommendation, memo, loading } = planner;
   const cheapest = plan ? Math.min(...plan.options.map((o) => o.totalCost)) : 0;
 
   return (
@@ -63,11 +64,14 @@ export default function App() {
                 </p>
               </div>
 
+              <CostChart options={plan.options} />
+
               <div className="grid gap-4 pt-2 md:grid-cols-3">
                 {plan.options.map((o) => (
                   <OptionCard
                     key={o.id}
                     option={o}
+                    previousOption={previousPlan?.options.find((p) => p.id === o.id)}
                     cheapest={cheapest}
                     recommended={recommendation?.recommendedOptionId === o.id}
                     onMemo={() => planner.generateMemo(o.id)}
