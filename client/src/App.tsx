@@ -1,3 +1,4 @@
+import { CostChart } from "./components/CostChart";
 import { MemoView } from "./components/MemoView";
 import { OptionCard } from "./components/OptionCard";
 import { RecommendationPanel } from "./components/RecommendationPanel";
@@ -68,6 +69,8 @@ export default function App() {
                   {plan.venue.distanceMiles} mi / {plan.venue.driveHours} h each way · {plan.options[0].travelers.total} travelers
                 </p>
               </div>
+
+              <CostChart options={plan.options} />
 
               <div className="grid gap-4 pt-2 md:grid-cols-3">
                 {plan.options.map((o) => (
