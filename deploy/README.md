@@ -57,13 +57,21 @@ journalctl -u travel-planner -n 5    # should say "Aivana mode: LIVE"
 ```
 
 Don't set `AIVANA_TIMEOUT_MS` below the defaults (30 s / 60 s); shorter timeouts cause fallbacks.
+
+In live mode the AI routes (parse, what-if, recommend, memo) are limited to `AI_RATE_LIMIT`
+requests per IP per 10 minutes (default 60, `0` turns it off) so a public URL can't drain the Aivana key.
+One demo run is about 15 calls. Judges on the same venue Wi-Fi share one IP, so raise it in `.env`
+if several people will demo at once.
 `.env` is not in git, so deploys never touch it.
 
 ## Day to day
 
 - **Deploy:** merge a PR. Watch it under the repo's **Actions** tab.
 - **Redeploy without a code change:** Actions → *Test and deploy* → **Run workflow** on `main`.
-- **Roll back:** revert the bad PR on GitHub; the revert merge deploys like any other.
+- **Failed deploys roll themselves back:** if the build or the health check fails, `update.sh` goes back to
+  the commit that was running, and the Actions job goes red. The site stays up on the old version.
+- **Roll back a bad change that *did* deploy:** revert the PR on GitHub; the revert merge deploys like any other.
+- **Overlapping deploys:** `update.sh` takes a lock, so a manual run and an Actions run wait for each other.
 - **Deploy by hand:** `ssh root@$IP bash /opt/travel-planner/deploy/update.sh [sha]`
   (use your personal key; the deploy key can't do anything but deploy).
 
@@ -74,7 +82,8 @@ Changes to `update.sh` itself take effect on the *next* deploy, because the old 
 | Symptom | Check |
 |---|---|
 | Deploy job fails at ssh | `DEPLOY_KNOWN_HOSTS` / `DEPLOY_SSH_KEY` secrets; did you rebuild the server (new host key)? |
-| Deploy job fails after "Restarting" | the job log includes the last 30 lines of `journalctl -u travel-planner` |
+| Deploy job fails and says "Rolling back" | the new commit didn't build or start; the job log has the build error or the last 30 lines of `journalctl -u travel-planner` |
 | Site doesn't load | `systemctl status travel-planner caddy` |
 | HTTPS certificate error | `journalctl -u caddy -n 50` (ports 80 and 443 must be open) |
 | Every AI answer says "Rules fallback" | key or `AIVANA_MOCK` in `/opt/travel-planner/.env` |
+| "Too many AI requests from your network" | the rate limit; raise `AI_RATE_LIMIT` in `.env` and restart |

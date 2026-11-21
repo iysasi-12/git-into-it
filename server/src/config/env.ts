@@ -22,6 +22,9 @@ const EnvSchema = z.object({
   // Recommend (34-43 s) and memo (26-32 s) live; recommend runs in the background, so it can wait longer.
   AIVANA_SLOW_TIMEOUT_MS: z.coerce.number().int().positive().default(60000),
   PORT: z.coerce.number().int().positive().default(3001),
+  // Live mode only: AI requests (parse, what-if, recommend, memo) per IP per 10 minutes. 0 = off.
+  // One demo run is ~15 calls; judges on shared Wi-Fi share an IP, so keep it generous.
+  AI_RATE_LIMIT: z.coerce.number().int().nonnegative().default(60),
 });
 
 const parsed = EnvSchema.safeParse(process.env);
@@ -44,4 +47,5 @@ export const env = {
   aivanaTimeoutMs: raw.AIVANA_TIMEOUT_MS,
   aivanaSlowTimeoutMs: raw.AIVANA_SLOW_TIMEOUT_MS,
   port: raw.PORT,
+  aiRateLimit: raw.AI_RATE_LIMIT,
 };
