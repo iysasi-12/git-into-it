@@ -376,7 +376,7 @@ Do them in order: D6 → D7 → D8. (D9 has moved to Oliver; its spec stays belo
    ```
    Ask yourself: what would happen without the `return () => clearInterval(id)` line?
 2. Use it in each place the app waits on the AI:
-   - `App.tsx`: the "Aivana is reviewing the options…" card (`loading.recommend`)
+   - `Skeletons.tsx`: the "Aivana is reviewing the options…" line in `RecommendationSkeleton` (it is only on screen while `loading.recommend` is true)
    - `WhatIfChat.tsx`: the "Recalculating…" line (`loading.whatif`)
    - `RequestPanel.tsx`: the *Extract details* button (`loading.parse`)
    - the memo: `loading.memo` (the *Generate travel memo* button in `OptionCard.tsx`)
